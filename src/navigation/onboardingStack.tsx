@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import navigationConfig from './config';
-import Signup from '../screens/auth/signup';
-import Login from '../screens/auth/login';
+import Signup from '../screens/onboarding/signup';
+import Login from '../screens/onboarding/login';
 import { isInitialInstall } from '../utilities/asyncStore';
 import { useEffect } from 'react';
+import DataScreen from '../screens/onboarding/data';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ const OnboardingStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{ ...navigationConfig, gestureEnabled: false }}
-      initialRouteName={'Signup'}
+      initialRouteName={'Data'}
     >
       <Stack.Screen
         name="Signup"
@@ -36,6 +37,13 @@ const OnboardingStack = () => {
       <Stack.Screen
         name="Login"
         component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Data"
+        component={DataScreen}
         options={{
           headerShown: false,
         }}

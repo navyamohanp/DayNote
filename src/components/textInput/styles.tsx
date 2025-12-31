@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { font, fontSize } from '../../themes/fonts';
+import { colors } from '../../themes';
 
 export const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   label: {
     // Removed as we use Animated.Text inline
@@ -21,7 +22,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: fontSize.average,
     fontFamily: font.nunitoSemiBold,
-    color: '#30393C',
+    color: colors.black,
     height: '100%',
   },
   inputNormalBorder: {

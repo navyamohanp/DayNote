@@ -41,7 +41,9 @@ const PrimaryButton = ({
       >
         <LinearGradient
           colors={
-            disabled ? [colors.gray, colors.gray] : ['#FF6584', '#FF8B7B']
+            disabled
+              ? [colors.gray, colors.gray]
+              : [colors.primaryPink, colors.primaryOrange]
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}

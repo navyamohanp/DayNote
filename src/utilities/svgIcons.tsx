@@ -7,6 +7,7 @@ import {
   home,
   profile,
   facebook,
+  downArrow,
 } from '../resources/svg/mainSvg';
 
 const IMAGES = {
@@ -16,6 +17,7 @@ const IMAGES = {
   eye: eye,
   closedEye: closedEye,
   facebook: facebook,
+  downArrow: downArrow,
 };
 
 export type IconsType =
@@ -24,7 +26,8 @@ export type IconsType =
   | 'profile'
   | 'eye'
   | 'closedEye'
-  | 'facebook';
+  | 'facebook'
+  | 'downArrow';
 
 /**
  * @param {string} icon Icon name

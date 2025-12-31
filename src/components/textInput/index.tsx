@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import SvgImage from '../../utilities/svgIcons';
 import { styles } from './styles';
+import { colors } from '../../themes';
 
 interface CustomTextInputProps {
   label: string;
@@ -33,7 +34,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     left: 12,
     top: -10,
     fontSize: 12,
-    color: '#747688',
+    color: colors.labelGray,
     backgroundColor: '#fff',
     paddingHorizontal: 4,
     zIndex: 1,
@@ -56,7 +57,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           onChangeText={onChangeText}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholderTextColor="#aaa"
+          placeholderTextColor={colors.placeHolder}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           autoCapitalize="none"
         />
@@ -71,7 +72,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
               icon={isPasswordVisible ? 'eye' : 'closedEye'}
               width={20}
               height={20}
-              color={'#30393C'}
+              color={colors.lightgray}
             />
           </TouchableOpacity>
         )}

@@ -1,15 +1,25 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
-import {colors, font, fontSize} from '../../themes';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  ViewStyle,
+} from 'react-native';
+import { colors, font, fontSize } from '../../themes';
 import SvgImage from '../../utilities/svgIcons';
+import styles from './style';
 
 interface DropdownProps {
-  options: {label: string; value: string | number}[];
+  options: { label: string; value: string | number }[];
   selectedValue: string | number;
   onValueChange: (value: string | number) => void;
   half?: boolean;
   placeholder?: string;
+  label?: string;
+  maxHeight?: number;
+  style?: ViewStyle;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -18,6 +28,9 @@ const Dropdown: React.FC<DropdownProps> = ({
   onValueChange,
   half,
   placeholder,
+  label,
+  maxHeight = 200,
+  style,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -26,33 +39,69 @@ const Dropdown: React.FC<DropdownProps> = ({
     setOpen(false);
   };
 
+  const labelStyle = {
+    position: 'absolute',
+    left: 12,
+    top: -10,
+    fontSize: 12,
+    color: colors.labelGray,
+    backgroundColor: colors.white,
+    paddingHorizontal: 4,
+    zIndex: 1,
+  };
+
   return (
-    <View style={styles.margin}>
+    <View style={[styles.margin, style]}>
+      {label && <Text style={labelStyle as any}>{label}</Text>}
       <TouchableOpacity
-        style={[styles.dropdownContainer, half && {marginHorizontal: 0}]}
+        style={[styles.dropdownContainer, half && { marginHorizontal: 0 }]}
         onPress={() => {
           setOpen(prev => !prev);
-        }}>
-        <Text allowFontScaling={false} style={styles.text}>
+        }}
+      >
+        <Text
+          allowFontScaling={false}
+          style={[
+            styles.text,
+            {
+              color: options.find(option => option.value === selectedValue)
+                ? colors.black
+                : colors.placeHolder,
+            },
+          ]}
+        >
           {options.find(option => option.value === selectedValue)?.label ||
             placeholder ||
             'Select'}
         </Text>
         <View style={styles.icon}>
-          <SvgImage icon={'dropdown'} height={24} width={24} />
+          <SvgImage
+            icon={'downArrow'}
+            height={18}
+            width={18}
+            strokeColor={colors.gray}
+          />
         </View>
       </TouchableOpacity>
 
       {open && (
-        <View style={[styles.modalContainer, half && {marginHorizontal: 0}]}>
+        <View
+          style={[
+            styles.modalContainer,
+            half && { marginHorizontal: 0 },
+            { maxHeight: maxHeight },
+          ]}
+        >
           <FlatList
             data={options}
             keyExtractor={item => item.value.toString()}
-            scrollEnabled={false}
-            renderItem={({item}) => (
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.option}
-                onPress={() => handleSelect(item.value)}>
+                onPress={() => handleSelect(item.value)}
+              >
                 <Text allowFontScaling={false} style={styles.optionText}>
                   {item.label}
                 </Text>
@@ -64,45 +113,5 @@ const Dropdown: React.FC<DropdownProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  dropdownContainer: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    height: 44,
-    width: '100%',
-    borderRadius: 8,
-    borderWidth: 1,
-    padding: 8,
-    gap: 10,
-    borderColor: colors.gray,
-    color: colors.secondary,
-    alignItems: 'center',
-    fontSize: fontSize.average,
-    fontFamily: font.nunitoRegular,
-  },
-
-  modalContainer: {
-    backgroundColor: colors.white,
-    borderWidth: 0.4,
-    borderColor: colors.lightgray,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    width: '100%',
-  },
-  text: {fontSize: fontSize.average, fontFamily: font.nunitoRegular},
-  icon: {position: 'absolute', right: 10},
-  option: {
-    paddingVertical: 10,
-    borderBottomColor: colors.lightgray,
-    borderBottomWidth: 0.4,
-  },
-  optionText: {
-    fontSize: fontSize.average,
-    color: colors.secondary,
-    fontFamily: font.nunitoRegular,
-  },
-  margin: {marginBottom: 13, width: '100%'},
-});
 
 export default Dropdown;

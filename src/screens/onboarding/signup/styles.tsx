@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { font, fontSize } from '../../../themes/fonts';
+import { colors } from '../../../themes';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     flexGrow: 1,
     paddingHorizontal: 24,
     paddingTop: 40,
@@ -18,25 +19,16 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.size28,
     fontFamily: font.nunitoBold,
-    color: '#000',
+    color: colors.black,
   },
   subtitle: {
     fontSize: fontSize.veryLarge,
     fontFamily: font.nunitoRegular,
-    color: '#aaa',
+    color: colors.lightgray,
   },
   form: {
     marginBottom: 30,
     marginTop: 20,
-  },
-  forgotPasswordContainer: {
-    alignItems: 'flex-end',
-    marginTop: 10,
-  },
-  forgotPasswordText: {
-    color: '#000',
-    fontSize: fontSize.small,
-    fontFamily: font.nunitoRegular,
   },
   footer: {
     marginTop: 'auto',
@@ -51,12 +43,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signInText: {
-    color: '#000',
+    color: colors.black,
     fontSize: fontSize.average,
     fontFamily: font.nunitoRegular,
   },
   signInLink: {
-    color: '#FF6584', // Match gradient start color
+    color: colors.primaryPink,
     fontSize: fontSize.average,
     fontFamily: font.nunitoBold,
   },
