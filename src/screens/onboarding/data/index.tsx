@@ -4,19 +4,34 @@ import { styles } from './styles';
 import CustomTextInput from '../../../components/textInput';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import Dropdown from '../../../components/dropDown';
+import { dataCollectionApi } from '../../../api/authAPI';
+import { login } from '../../../redux/reducers/authenticationReducer';
+import { useDispatch } from 'react-redux';
 
-const DataScreen = ({ navigation }: any) => {
-  const [userName, setUserName] = useState('');
+const DataScreen = ({ navigation, route }: any) => {
+  const { id } = route.params;
+  const [username, setUserName] = useState('');
   const [age, setAge] = useState<string | number>('');
   const [gender, setGender] = useState('');
 
-  const ageOptions = Array.from({ length: 83 }, (_, i) => ({
-    label: (i + 18).toString(),
-    value: i + 18,
+  const ageOptions = Array.from({ length: 88 }, (_, i) => ({
+    label: (i + 13).toString(),
+    value: i + 13,
   }));
 
   const genderOptions = ['Male', 'Female', 'Other', 'Prefer not to say'];
+  const dispatch = useDispatch();
 
+  const onContinue = async () => {
+    console.log(username, '=====name');
+    const response = await dataCollectionApi({ id, username, age, gender });
+
+    if (response?.code === 200) {
+      dispatch(login());
+    } else {
+      console.log('add error toast');
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -28,8 +43,8 @@ const DataScreen = ({ navigation }: any) => {
 
       <View style={styles.form}>
         <CustomTextInput
-          label="Username (optional)"
-          value={userName}
+          label="Username"
+          value={username}
           onChangeText={setUserName}
           placeholder="Enter your username"
         />
@@ -74,17 +89,10 @@ const DataScreen = ({ navigation }: any) => {
       <PrimaryButton
         buttontitle="Continue"
         onPress={() => {
-          console.log({ userName, age, gender });
-          // navigation.navigate('NextScreen');
+          onContinue();
         }}
         style={styles.loginButton}
       />
-
-      <View style={styles.signInContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.signInText}>Skip for now</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };

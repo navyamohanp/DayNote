@@ -3,10 +3,16 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import CustomTextInput from '../../../components/textInput';
 import { styles } from './styles';
+import { loginApi } from '../../../api/authAPI';
 
 const Login = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const LoginApi = async () => {
+    const response = await loginApi({ email, password });
+    console.log('Login Response:', response, email, password);
+  };
 
   return (
     <View style={styles.container}>
@@ -36,7 +42,10 @@ const Login = ({ navigation }: any) => {
 
       <PrimaryButton
         buttontitle="Login"
-        onPress={() => console.log('Login Pressed')}
+        onPress={() => {
+          console.log('login');
+          LoginApi();
+        }}
         style={styles.loginButton}
       />
 

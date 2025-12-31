@@ -9,7 +9,7 @@ import OfflineView from '../components/offlineView';
 import { colors, Images } from '../themes';
 import strings from '../utilities/strings';
 import { AppState, PermissionsAndroid, Platform, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getAuthToken,
   isProfileCompleted,
@@ -38,7 +38,7 @@ const AppContainer = () => {
 
 const RootStackScreen = () => {
   // const [isLoading, setLoading] = useState(true);
-  // const isLoggedIn = useAppSelector(state => state.authentication.isLoggedIn);
+  const isLoggedIn = useSelector(state => state.authentication.isLoggedIn);
   // //const isLoggedIn = true;
   // const dispatch = useDispatch();
   // const permissionGranted = useAppSelector(
@@ -187,19 +187,19 @@ const RootStackScreen = () => {
 
   return (
     <RootStack.Navigator>
-      {/* {isLoggedIn ? ( */}
-      {/* <RootStack.Screen
-        name="MainStack"
-        component={MainStack}
-        options={{ animation: 'slide_from_right', headerShown: false }}
-      /> */}
-      {/* ) : ( */}
-      <RootStack.Screen
-        name="OnboardingStack"
-        component={OnboardingStack}
-        options={{ animation: 'slide_from_right', headerShown: false }}
-      />
-      {/* )} */}
+      {isLoggedIn ? (
+        <RootStack.Screen
+          name="MainStack"
+          component={MainStack}
+          options={{ animation: 'slide_from_right', headerShown: false }}
+        />
+      ) : (
+        <RootStack.Screen
+          name="OnboardingStack"
+          component={OnboardingStack}
+          options={{ animation: 'slide_from_right', headerShown: false }}
+        />
+      )}
     </RootStack.Navigator>
   );
 };

@@ -1,6 +1,7 @@
 // @flow
 
 import { Platform } from 'react-native';
+import { dataCollectionApi } from './commonAPI';
 // import Config from 'react-native-config';
 export const domains = {
   test: Platform.select({
@@ -15,6 +16,8 @@ export const baseURL = domains.test;
 
 export const apiEndpoints = {
   signup: baseURL + 'signup',
+  login: baseURL + 'login',
+  dataCollection: baseURL + 'data/',
 };
 
 export type APIDataType = {

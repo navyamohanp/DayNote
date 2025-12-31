@@ -13,7 +13,13 @@ const SignUp = ({ navigation }: any) => {
   const createAccount = async () => {
     console.log(name, email, password);
     const response = await createAccountApi({ name, email, password });
-    console.log(response);
+
+    if (response?.code === 200) {
+      navigation.navigate('Data', { id: response?.user?.id });
+    } else {
+      console.log('add error toast');
+      console.log(response, '=====resp');
+    }
   };
 
   return (
