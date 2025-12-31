@@ -103,9 +103,11 @@ export const apiManager = async ({
   const isConnected = await NetInfo.fetch().then(state => state.isConnected);
 
   return new Promise((resolve, reject) => {
+    const isAuthApi =
+      apiURL === apiEndpoints.login || apiURL === apiEndpoints.refreshToken;
     // Helper function to process the response
     const processResponse = response => {
-      if (response.status === 401) {
+      if (response.status === 401 && !isAuthApi) {
         // Token refresh logic
         getUpdatedToken()
           .then(newToken => {

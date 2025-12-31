@@ -100,9 +100,12 @@ export const loginApi = async ({ email, password }: loginApiType) => {
     };
     apiManager(apiData)
       .then((response: any) => {
+        console.log(response, 'rrepspsdfsfjdhj');
         resolve(response);
       })
       .catch((reject2: any) => {
+        console.log(reject2, 'rrepspsdfsfjdhj');
+
         reject(reject2);
       });
   });
