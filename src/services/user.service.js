@@ -1,7 +1,11 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 
-const { generateAccessToken, generateRefreshToken } = require("../utils/token");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} = require("../utils/token");
 
 exports.createUser = async (data) => {
   const user = await User.create({
@@ -28,12 +32,11 @@ exports.createUser = async (data) => {
 };
 
 exports.dataCollection = async (userId, data) => {
-  console.log(userId, "======userid");
   const user = await User.findById(userId);
   if (!user) {
     throw new Error("User not found");
   }
-  console.log(user, "=======user");
+
   user.username = data.username.trim();
 
   if (data.age !== undefined) {
@@ -74,4 +77,26 @@ exports.loginUser = async (data) => {
   await user.save();
 
   return user;
+};
+
+exports.refreshToken = async (refreshToken) => {
+  // Verify refresh token
+  const decoded = verifyRefreshToken(refreshToken);
+
+  // Find user
+  const user = await User.findById(decoded.userId);
+
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new Error("Invalid refresh token");
+  }
+
+  // Generate new access token
+  const newAccessToken = generateAccessToken(user._id);
+  const newRefreshToken = generateRefreshToken(user._id);
+  user.refreshToken = newRefreshToken;
+  await user.save();
+  return {
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  };
 };

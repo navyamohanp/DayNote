@@ -109,3 +109,27 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+exports.refresh = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json({
+      message: "Refresh token is required",
+    });
+  }
+
+  try {
+    const tokens = await userService.refreshToken(refreshToken);
+
+    return res.status(200).json({
+      code: 200,
+      message: "Token refreshed successfully",
+      data: tokens,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      message: error.message,
+    });
+  }
+};

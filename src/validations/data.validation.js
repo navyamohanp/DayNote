@@ -13,7 +13,7 @@ exports.validateData = ({ username, age, gender }) => {
 
   if (
     gender !== "" &&
-    !["male", "female", "other", "prefer_not_to_say"].includes(gender)
+    !["Male", "Female", "Other", "Prefer not to say"].includes(gender)
   ) {
     return "Invalid gender value";
   }
