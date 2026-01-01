@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 
-const route = require("./src/routes/auth");
+const route = require("./src/routes/index.js");
 
 const PORT = 3000;
 
