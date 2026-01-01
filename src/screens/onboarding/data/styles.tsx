@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: fontSize.average,
-    color: colors.placeHolder,
+    color: colors.black,
     fontFamily: font.nunitoRegular,
   },
   genderTextSelected: {

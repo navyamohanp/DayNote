@@ -7,12 +7,15 @@ import Dropdown from '../../../components/dropDown';
 import { dataCollectionApi } from '../../../api/authAPI';
 import { login } from '../../../redux/reducers/authenticationReducer';
 import { useDispatch } from 'react-redux';
+import { validateData } from '../../../utilities/validations';
+import Toaster from '../../../components/toasts/helper';
 
 const DataScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
   const [username, setUserName] = useState('');
   const [age, setAge] = useState<string | number>('');
   const [gender, setGender] = useState('');
+  const [errors, setErrors] = useState<{ username?: string }>({});
 
   const ageOptions = Array.from({ length: 88 }, (_, i) => ({
     label: (i + 13).toString(),
@@ -23,11 +26,30 @@ const DataScreen = ({ navigation, route }: any) => {
   const dispatch = useDispatch();
 
   const onContinue = async () => {
-    const response = await dataCollectionApi({ id, username, age, gender });
+    const { isValid, errors: validationErrors } = validateData(username);
+
+    if (!isValid) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    const response: any = await dataCollectionApi({
+      id,
+      username,
+      age,
+      gender,
+    });
 
     if (response?.code === 200) {
+      console.log(response, '========res');
+      // Toaster.showToast('Profile updated successfully.', 'successToast');
       dispatch(login());
     } else {
+      Toaster.showToast(
+        response?.message || 'Failed to update profile',
+        'errorToast',
+      );
       console.log('add error toast');
     }
   };
@@ -44,8 +66,14 @@ const DataScreen = ({ navigation, route }: any) => {
         <CustomTextInput
           label="Username"
           value={username}
-          onChangeText={setUserName}
+          onChangeText={text => {
+            setUserName(text);
+            if (errors.username) {
+              setErrors({ ...errors, username: '' });
+            }
+          }}
           placeholder="Enter your username"
+          error={errors.username}
         />
 
         <View style={styles.inputSpacing}>
@@ -90,6 +118,7 @@ const DataScreen = ({ navigation, route }: any) => {
         onPress={() => {
           onContinue();
         }}
+        disabled={!!errors.username}
         style={styles.loginButton}
       />
     </ScrollView>

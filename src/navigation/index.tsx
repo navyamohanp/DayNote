@@ -37,36 +37,40 @@ const AppContainer = () => {
 };
 
 const RootStackScreen = () => {
-  // const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const isLoggedIn = useSelector(state => state.authentication.isLoggedIn);
   // //const isLoggedIn = true;
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const permissionGranted = useAppSelector(
   //   state => state.notification.permissionGranted,
   // );
 
-  // useEffect(() => {
-  //   fetchUserStatus();
-  // }, []);
+  useEffect(() => {
+    fetchUserStatus();
+  }, []);
 
-  // async function fetchUserStatus() {
-  //   const token = await getAuthToken();
-  //   const isProfile = await isProfileCompleted();
-  //   if (token && isProfile === true) {
-  //     dispatch(login());
-  //   }
-  //   const isNotificationsEnabled = await notificationEnabled();
-  //   const isPermission = await checkNotificationPermission();
-  //   if (isPermission && isNotificationsEnabled) {
-  //     dispatch(setPermissionGranted(true));
-  //   } else {
-  //     console.warn('Notification permission not granted.');
-  //   }
-  //   setLoading(false);
-  //   setTimeout(() => {
-  //     SplashScreen.hide();
-  //   }, 1000);
-  // }
+  async function fetchUserStatus() {
+    const token = await getAuthToken();
+    //   const isProfile = await isProfileCompleted();
+    // if (token && isProfile === true) {
+    //   dispatch(login());
+    // }
+
+    if (token) {
+      dispatch(login());
+    }
+    //   const isNotificationsEnabled = await notificationEnabled();
+    //   const isPermission = await checkNotificationPermission();
+    //   if (isPermission && isNotificationsEnabled) {
+    //     dispatch(setPermissionGranted(true));
+    //   } else {
+    //     console.warn('Notification permission not granted.');
+    //   }
+    setLoading(false);
+    //   setTimeout(() => {
+    //     SplashScreen.hide();
+    //   }, 1000);
+  }
 
   // useEffect(() => {
   //   if (permissionGranted) {
@@ -167,23 +171,23 @@ const RootStackScreen = () => {
   //   });
   // };
 
-  // if (isLoading) {
-  //   return (
-  //     <View
-  //       // eslint-disable-next-line react-native/no-inline-styles
-  //       style={{
-  //         flex: 1,
-  //         height: '100%',
-  //         width: '100%',
-  //         backgroundColor: colors.background,
-  //         justifyContent: 'center',
-  //         alignSelf: 'center',
-  //       }}
-  //     >
-  //       {/* <ActivityIndicator size="large" color={colors.red} /> */}
-  //     </View>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <View
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          flex: 1,
+          height: '100%',
+          width: '100%',
+          backgroundColor: colors.background,
+          justifyContent: 'center',
+          alignSelf: 'center',
+        }}
+      >
+        {/* <ActivityIndicator size="large" color={colors.red} /> */}
+      </View>
+    );
+  }
 
   return (
     <RootStack.Navigator>

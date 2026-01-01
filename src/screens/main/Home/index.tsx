@@ -49,7 +49,7 @@ const Home = () => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Good Evening, Andrew</Text>
+            <Text style={styles.greeting}>Hi,</Text>
             <Text style={styles.subGreeting}>How are you feeling today?</Text>
           </View>
           <View style={styles.profilePicture}>
@@ -58,14 +58,13 @@ const Home = () => {
         </View>
 
         {/* Mood Selector */}
-        <MoodSelector />
-
-        {/* Entry Card */}
-        <EntryCard onPress={handleWriteNow} />
+        {/* <MoodSelector /> */}
 
         {/* Streak Card */}
         <StreakCard streakDays={5} />
 
+        {/* Entry Card */}
+        <EntryCard onPress={handleWriteNow} />
         {/* Recent Journals */}
         <View style={styles.recentSection}>
           <View style={styles.recentHeader}>

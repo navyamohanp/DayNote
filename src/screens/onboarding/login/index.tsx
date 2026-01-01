@@ -6,19 +6,39 @@ import { styles } from './styles';
 import { loginApi } from '../../../api/authAPI';
 import { login } from '../../../redux/reducers/authenticationReducer';
 import { useDispatch } from 'react-redux';
+import { validateLogin } from '../../../utilities/validations';
+import Toaster from '../../../components/toasts/helper';
 
 const Login = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {},
+  );
   const dispatch = useDispatch();
 
   const LoginApi = async () => {
-    const response = await loginApi({ email, password });
+    const { isValid, errors: validationErrors } = validateLogin(
+      email,
+      password,
+    );
+
+    if (!isValid) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    const response: any = await loginApi({ email, password });
     console.log('Login Response:', response, email, password);
     if (response?.code === 200) {
+      Toaster.showToast('Logged in successfully', 'successToast');
       dispatch(login());
     } else {
-      console.log('add error toast');
+      Toaster.showToast(
+        response?.message || 'Invalid credentials',
+        'errorToast',
+      );
     }
   };
 
@@ -33,15 +53,27 @@ const Login = ({ navigation }: any) => {
         <CustomTextInput
           label="Email ID"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={text => {
+            setEmail(text);
+            if (errors.email) {
+              setErrors({ ...errors, email: '' });
+            }
+          }}
           placeholder="Enter your email"
+          error={errors.email}
         />
         <CustomTextInput
           label="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={text => {
+            setPassword(text);
+            if (errors.password) {
+              setErrors({ ...errors, password: '' });
+            }
+          }}
           secureTextEntry
           placeholder="Enter your password"
+          error={errors.password}
         />
         <TouchableOpacity style={styles.forgotPasswordContainer}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
@@ -54,6 +86,7 @@ const Login = ({ navigation }: any) => {
           console.log('login');
           LoginApi();
         }}
+        disabled={Object.values(errors).some(error => !!error)}
         style={styles.loginButton}
       />
 
