@@ -33,7 +33,17 @@ export const createAccountApi = async ({
       },
     };
     apiManager(apiData)
-      .then((response: any) => {
+      .then(async (response: any) => {
+        if (response?.code === 200) {
+          const accessToken = response?.accessToken;
+          const refreshToken = response?.refreshToken;
+          if (accessToken) {
+            await saveAuthToken(accessToken);
+          }
+          if (refreshToken) {
+            await saveRefreshToken(refreshToken);
+          }
+        }
         resolve(response);
       })
       .catch((reject2: any) => {
@@ -55,7 +65,6 @@ export const dataCollectionApi = async ({
   gender,
   age,
 }: DataApiType) => {
-  const accessToken = await getAuthToken();
   return new Promise((resolve, reject) => {
     const apiData: APIDataType = {
       method: 'post',
@@ -99,13 +108,20 @@ export const loginApi = async ({ email, password }: loginApiType) => {
       },
     };
     apiManager(apiData)
-      .then((response: any) => {
-        console.log(response, 'rrepspsdfsfjdhj');
+      .then(async (response: any) => {
+        if (response?.code === 200) {
+          const accessToken = response?.data?.accessToken;
+          const refreshToken = response?.data?.refreshToken;
+          if (accessToken) {
+            await saveAuthToken(accessToken);
+          }
+          if (refreshToken) {
+            await saveRefreshToken(refreshToken);
+          }
+        }
         resolve(response);
       })
       .catch((reject2: any) => {
-        console.log(reject2, 'rrepspsdfsfjdhj');
-
         reject(reject2);
       });
   });

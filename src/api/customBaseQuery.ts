@@ -53,8 +53,8 @@ const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
       }
 
       const refreshData = await refreshResponse.json();
-      const newAccessToken = refreshData?.data?.tokens?.access?.token;
-      const newRefreshToken = refreshData?.data?.tokens?.refresh?.token;
+      const newAccessToken = refreshData?.data?.accessToken;
+      const newRefreshToken = refreshData?.data?.refreshToken;
 
       if (newAccessToken && newRefreshToken) {
         await saveAuthToken(newAccessToken);

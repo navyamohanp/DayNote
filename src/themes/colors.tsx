@@ -25,6 +25,12 @@ const colors = {
   textSecondary: '#666666',
   textTertiary: '#999999',
   viewAllLink: '#FF6584',
+
+  // Toast colors
+  redD84A49: '#D84A49',
+  yellowE7C355: '#E7C355',
+  green5BC2A4: '#5BC2A4',
+  blue73AFC8: '#73AFC8',
 };
 
 export default colors;

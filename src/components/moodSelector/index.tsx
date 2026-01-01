@@ -6,7 +6,7 @@ import { colors } from '../../themes';
 const MoodSelector = () => {
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
 
-  const moods = ['😔', '😐', '🙂', '😊'];
+  const moods = ['😔', '🙂', '😊', '🤩'];
 
   return (
     <View style={styles.container}>

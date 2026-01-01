@@ -187,19 +187,19 @@ const RootStackScreen = () => {
 
   return (
     <RootStack.Navigator>
-      {/* {isLoggedIn ? ( */}
-      <RootStack.Screen
-        name="MainStack"
-        component={MainStack}
-        options={{ animation: 'slide_from_right', headerShown: false }}
-      />
-      {/* ) : (
+      {isLoggedIn ? (
+        <RootStack.Screen
+          name="MainStack"
+          component={MainStack}
+          options={{ animation: 'slide_from_right', headerShown: false }}
+        />
+      ) : (
         <RootStack.Screen
           name="OnboardingStack"
           component={OnboardingStack}
           options={{ animation: 'slide_from_right', headerShown: false }}
         />
-      )} */}
+      )}
     </RootStack.Navigator>
   );
 };

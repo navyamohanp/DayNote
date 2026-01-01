@@ -54,7 +54,7 @@ export const apiManager = async ({
       ? {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          // Authorization: accessToken ? `Bearer ${accessToken}` : '',
+          Authorization: accessToken ? `Bearer ${accessToken}` : '',
           devicetype: device_type,
           devicetoken: device_token,
           timezone: deviceTimeZone,
@@ -202,15 +202,9 @@ const refreshToken = async () => {
 
     const refreshData = await refreshResponse.json();
 
-    // console.log(
-    //   'refreshToken request',
-    //   apiEndpoints.refreshToken,
-    //   refreshParams,
-    // );
-    // console.log('refreshToken response', JSON.stringify(refreshData));
-    const newAccessToken = refreshData?.data?.tokens?.access?.token;
-    const newRefreshToken = refreshData?.data?.tokens?.refresh?.token;
-    if (newRefreshToken) {
+    const newAccessToken = refreshData?.data?.accessToken;
+    const newRefreshToken = refreshData?.data?.refreshToken;
+    if (newAccessToken && newRefreshToken) {
       await saveAuthToken(newAccessToken);
       await saveRefreshToken(newRefreshToken);
     }

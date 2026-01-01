@@ -7,3 +7,5 @@ export const TOAST_WARNING: string = 'Warning';
 export const TOAST_SUCCESS: string = 'Success';
 
 export const TOAST_NOTIFICATION: string = 'Notification';
+
+export const TOAST_INFO: string = 'Info';

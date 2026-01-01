@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SHOW_TOAST_MESSAGE,
   TOAST_ERROR,
@@ -13,11 +13,11 @@ import {
   TOAST_SUCCESS,
   TOAST_WARNING,
 } from '../../themes/toasts';
-import {styles} from './styles';
-import {ToastProps, ToastTypes} from '../helpers/toastHelper';
-import SvgImage, {IconsType} from '../../utilities/svgIcons';
-import {heightRatio, widthRatio} from '../../utilities/dimensions';
-import {colors} from '../../themes';
+import { styles } from './styles';
+import { ToastProps, ToastTypes } from './helper';
+import SvgImage, { IconsType } from '../../utilities/svgIcons';
+import { heightRatio, widthRatio } from '../../utilities/dimensions';
+import { colors } from '../../themes';
 
 const Toast = () => {
   const [message, setMessage] = useState<string>('');
@@ -57,25 +57,6 @@ const Toast = () => {
     setMessageType('Notification');
   };
 
-  const findIcon = (type: ToastTypes): IconsType => {
-    switch (type) {
-      case TOAST_ERROR:
-        return 'toastErrorIcon';
-
-      case TOAST_WARNING:
-        return 'toastWarningIcon';
-
-      case TOAST_SUCCESS:
-        return 'toastSuccessIcon';
-
-      case TOAST_NOTIFICATION:
-        return 'toastNotificationIcon';
-
-      default:
-        return 'toastNotificationIcon';
-    }
-  };
-
   const findColor = (type: ToastTypes): string => {
     switch (type) {
       case TOAST_ERROR:
@@ -112,47 +93,25 @@ const Toast = () => {
           styles.containerStyle,
           {
             backgroundColor: findColor(messageType),
-            paddingLeft:
-              messageType === TOAST_WARNING ? 12 * widthRatio : 15 * widthRatio,
-            paddingTop:
-              messageType === TOAST_WARNING
-                ? 13 * heightRatio
-                : 18 * heightRatio,
+            paddingHorizontal: 15 * widthRatio,
+            paddingVertical: 18 * heightRatio,
             opacity: opacity,
           },
-        ]}>
+        ]}
+      >
         <View style={styles.containerLeftStyle}>
-          <SvgImage
-            icon={findIcon(messageType)}
-            height={
-              messageType === TOAST_WARNING ? 28 * widthRatio : 22 * widthRatio
-            }
-            width={
-              messageType === TOAST_WARNING ? 28 * widthRatio : 22 * widthRatio
-            }
-          />
-          <Text
-            style={[
-              styles.textStyle,
-              {
-                marginLeft:
-                  messageType === TOAST_WARNING
-                    ? 8 * widthRatio
-                    : 10 * widthRatio,
-              },
-            ]}>
-            {message}
-          </Text>
+          <Text style={styles.textStyle}>{message}</Text>
         </View>
         <TouchableOpacity
           onPress={() => {
             onClose();
-          }}>
-          <SvgImage
+          }}
+        >
+          {/* <SvgImage
             icon={'closeWhite'}
             height={22 * widthRatio}
             width={22 * widthRatio}
-          />
+          /> */}
         </TouchableOpacity>
       </Animated.View>
     );

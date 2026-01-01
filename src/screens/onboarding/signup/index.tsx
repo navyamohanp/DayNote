@@ -4,20 +4,43 @@ import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import CustomTextInput from '../../../components/textInput';
 import { styles } from './styles';
 import { createAccountApi } from '../../../api/authAPI';
+import { validateSignup } from '../../../utilities/validations';
+import Toaster from '../../../components/toasts/helper';
 
 const SignUp = ({ navigation }: any) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+  }>({});
 
   const createAccount = async () => {
+    const { isValid, errors: validationErrors } = validateSignup(
+      name,
+      email,
+      password,
+    );
+
+    if (!isValid) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
     console.log(name, email, password);
-    const response = await createAccountApi({ name, email, password });
+    const response: any = await createAccountApi({ name, email, password });
 
     if (response?.code === 200) {
+      Toaster.showToast('User registered successfully', 'successToast');
       navigation.navigate('Data', { id: response?.user?.id });
     } else {
-      console.log('add error toast');
+      Toaster.showToast(
+        response?.message || 'Something went wrong',
+        'errorToast',
+      );
       console.log(response, '=====resp');
     }
   };
@@ -33,27 +56,46 @@ const SignUp = ({ navigation }: any) => {
         <CustomTextInput
           label="Full Name"
           value={name}
-          onChangeText={setName}
+          onChangeText={text => {
+            setName(text);
+            if (errors.name) {
+              setErrors({ ...errors, name: '' });
+            }
+          }}
           placeholder="Enter your name"
+          error={errors.name}
         />
         <CustomTextInput
           label="Email ID"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={text => {
+            setEmail(text);
+            if (errors.email) {
+              setErrors({ ...errors, email: '' });
+            }
+          }}
           placeholder="Enter your email"
+          error={errors.email}
         />
         <CustomTextInput
           label="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={text => {
+            setPassword(text);
+            if (errors.password) {
+              setErrors({ ...errors, password: '' });
+            }
+          }}
           secureTextEntry
           placeholder="Enter your password"
+          error={errors.password}
         />
       </View>
 
       <PrimaryButton
         buttontitle="Sign Up"
         onPress={() => createAccount()}
+        disabled={Object.values(errors).some(error => !!error)}
         style={styles.loginButton}
       />
 

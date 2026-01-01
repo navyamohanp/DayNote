@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { reduxStore } from './src/redux/store';
 import AppContainer from './src/navigation';
+import Toast from './src/components/toasts';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -13,6 +14,7 @@ function App() {
       <SafeAreaProvider>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
         <AppContainer />
+        <Toast />
       </SafeAreaProvider>
     </Provider>
   );

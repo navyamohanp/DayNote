@@ -10,12 +10,15 @@ export const domains = {
 };
 
 export const baseURL = domains.test;
-
+const routes = {
+  auth: 'auth/',
+  journal: 'journal/',
+};
 export const apiEndpoints = {
-  signup: baseURL + 'signup',
-  login: baseURL + 'login',
-  dataCollection: baseURL + 'data/',
-  refreshToken: baseURL + 'refresh',
+  signup: baseURL + routes.auth + 'signup',
+  login: baseURL + routes.auth + 'login',
+  dataCollection: baseURL + routes.auth + 'data/',
+  refreshToken: baseURL + routes.auth + 'refresh',
 };
 
 export type APIDataType = {
