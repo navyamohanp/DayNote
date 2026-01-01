@@ -8,13 +8,12 @@ import {
   TextStyle,
 } from 'react-native';
 import React from 'react';
-import LinearGradient from 'react-native-linear-gradient';
 import { styles } from './styles';
 import { colors } from '../../themes';
 
 interface Props {
   buttontitle: string;
-  onPress: Function;
+  onPress?: Function;
   disabled?: boolean;
   loading?: boolean;
   style?: StyleProp<ViewStyle> | undefined;
@@ -39,16 +38,12 @@ const PrimaryButton = ({
           onPress();
         }}
       >
-        <LinearGradient
-          colors={
-            disabled
-              ? [colors.gray, colors.gray]
-              : [colors.primaryPink, colors.primaryOrange]
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+        <View
           style={[
             buttonStyle ? buttonStyle : styles.button,
+            {
+              backgroundColor: disabled ? colors.gray : colors.primaryPink,
+            },
             disabled
               ? styles.disabledButton
               : buttonStyle
@@ -70,7 +65,7 @@ const PrimaryButton = ({
               {buttontitle}
             </Text>
           )}
-        </LinearGradient>
+        </View>
       </TouchableOpacity>
     </View>
   );

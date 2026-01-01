@@ -8,6 +8,12 @@ import {
   profile,
   facebook,
   downArrow,
+  journal,
+  filter,
+  search,
+  deleteIcon,
+  edit,
+  menu,
 } from '../resources/svg/mainSvg';
 
 const IMAGES = {
@@ -18,6 +24,12 @@ const IMAGES = {
   closedEye: closedEye,
   facebook: facebook,
   downArrow: downArrow,
+  journal: journal,
+  search: search,
+  filter: filter,
+  delete: deleteIcon,
+  edit: edit,
+  menu: menu,
 };
 
 export type IconsType =
@@ -27,7 +39,13 @@ export type IconsType =
   | 'eye'
   | 'closedEye'
   | 'facebook'
-  | 'downArrow';
+  | 'journal'
+  | 'downArrow'
+  | 'search'
+  | 'filter'
+  | 'delete'
+  | 'edit'
+  | 'menu';
 
 /**
  * @param {string} icon Icon name

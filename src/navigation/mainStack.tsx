@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSelector } from 'react-redux';
 import Profile from '../screens/main/Profile';
+import Journal from '../screens/main/Journal';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -40,7 +41,7 @@ const NavBar = () => {
   const bottomInset = Math.min(insets.bottom, 12);
   const navigationBlocked = useSelector(state => state?.navigation?.blocked);
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
       <Tab.Navigator
         screenOptions={{
           tabBarLabelPosition: 'below-icon',
@@ -51,7 +52,7 @@ const NavBar = () => {
             paddingBottom: bottomInset,
             borderTopRightRadius: 22,
             borderTopLeftRadius: 22,
-            shadowColor: colors.avatarBlack,
+
             shadowOffset: {
               width: 2,
               height: 2,
@@ -73,7 +74,7 @@ const NavBar = () => {
                 icon={'home'}
                 height={24}
                 width={24}
-                strokeColor={!focused ? colors.secondary : ''}
+                strokeColor={!focused ? colors.gray : ''}
                 color={!focused ? colors.white : ''}
               />
             ),
@@ -83,10 +84,49 @@ const NavBar = () => {
                 style={{
                   fontSize: fontSize.small,
                   fontFamily: focused ? font.nunitoBold : font.nunitoMedium,
-                  color: focused ? colors.primary : colors.secondary,
+                  color: focused ? colors.primaryPink : colors.gray,
                 }}
               >
                 Home
+              </Text>
+            ),
+            tabBarButton: props => (
+              <TouchableWithoutFeedback
+                {...props}
+                onPress={() => {
+                  if (!navigationBlocked && props.onPress) {
+                    props.onPress();
+                  }
+                }}
+              >
+                <View style={[props.style, { flex: 1 }]}>{props.children}</View>
+              </TouchableWithoutFeedback>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Journal"
+          component={Journal}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <SvgImage
+                icon={'journal'}
+                height={30}
+                width={32}
+                color={focused ? colors.primaryPink : colors.gray}
+                strokeColor={colors.white}
+              />
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text
+                allowFontScaling={false}
+                style={{
+                  fontSize: fontSize.small,
+                  fontFamily: focused ? font.nunitoBold : font.nunitoMedium,
+                  color: focused ? colors.primaryPink : colors.gray,
+                }}
+              >
+                My Journals
               </Text>
             ),
             tabBarButton: props => (
@@ -112,8 +152,8 @@ const NavBar = () => {
                 icon={'profile'}
                 height={24}
                 width={24}
-                strokeColor={focused ? colors.primary : colors.secondary}
-                color={focused ? colors.primary : colors.white}
+                strokeColor={focused ? colors.primaryPink : colors.gray}
+                color={focused ? colors.primaryPink : colors.gray}
               />
             ),
             tabBarLabel: ({ focused }) => (
@@ -122,7 +162,7 @@ const NavBar = () => {
                 style={{
                   fontSize: fontSize.small,
                   fontFamily: focused ? font.nunitoBold : font.nunitoMedium,
-                  color: focused ? colors.primary : colors.secondary,
+                  color: focused ? colors.primaryPink : colors.gray,
                 }}
               >
                 Profile

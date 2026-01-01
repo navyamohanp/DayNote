@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     textAlign: 'center',
-    fontSize: fontSize.medium,
+    fontSize: 15,
     fontFamily: font.nunitoBold,
   },
 

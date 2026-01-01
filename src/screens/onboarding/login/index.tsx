@@ -4,14 +4,22 @@ import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import CustomTextInput from '../../../components/textInput';
 import { styles } from './styles';
 import { loginApi } from '../../../api/authAPI';
+import { login } from '../../../redux/reducers/authenticationReducer';
+import { useDispatch } from 'react-redux';
 
 const Login = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
   const LoginApi = async () => {
     const response = await loginApi({ email, password });
     console.log('Login Response:', response, email, password);
+    if (response?.code === 200) {
+      dispatch(login());
+    } else {
+      console.log('add error toast');
+    }
   };
 
   return (

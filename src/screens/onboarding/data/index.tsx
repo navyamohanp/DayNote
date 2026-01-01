@@ -23,7 +23,6 @@ const DataScreen = ({ navigation, route }: any) => {
   const dispatch = useDispatch();
 
   const onContinue = async () => {
-    console.log(username, '=====name');
     const response = await dataCollectionApi({ id, username, age, gender });
 
     if (response?.code === 200) {
