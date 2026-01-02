@@ -1,5 +1,6 @@
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import MoodSelector from '../../../components/moodSelector';
 import EntryCard from '../../../components/entryCard';
@@ -7,6 +8,7 @@ import JournalListItem from './components/journalListItem';
 import StreakCard from '../../../components/streakCard';
 
 const Home = () => {
+  const insets = useSafeAreaInsets();
   // Sample data for recent journals
   const recentJournals = [
     {
@@ -43,7 +45,10 @@ const Home = () => {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 20 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}

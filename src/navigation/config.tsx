@@ -12,7 +12,7 @@ const navigationConfig = {
   headerBackTitleVisible: false,
   // cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
   animation: 'slide_from_right',
-};
+} as const;
 
 export default navigationConfig;
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import CustomTextInput from '../../../components/textInput';
 import { styles } from './styles';
@@ -10,6 +11,7 @@ import { validateLogin } from '../../../utilities/validations';
 import Toaster from '../../../components/toasts/helper';
 
 const Login = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -43,7 +45,7 @@ const Login = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Welcome,</Text>
         <Text style={styles.subtitle}>Sign in to continue!</Text>
@@ -75,7 +77,10 @@ const Login = ({ navigation }: any) => {
           placeholder="Enter your password"
           error={errors.password}
         />
-        <TouchableOpacity style={styles.forgotPasswordContainer}>
+        <TouchableOpacity
+          style={styles.forgotPasswordContainer}
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>

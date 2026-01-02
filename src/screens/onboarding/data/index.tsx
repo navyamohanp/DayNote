@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import CustomTextInput from '../../../components/textInput';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
@@ -11,6 +12,7 @@ import { validateData } from '../../../utilities/validations';
 import Toaster from '../../../components/toasts/helper';
 
 const DataScreen = ({ navigation, route }: any) => {
+  const insets = useSafeAreaInsets();
   const { id } = route.params;
   const [username, setUserName] = useState('');
   const [age, setAge] = useState<string | number>('');
@@ -54,7 +56,12 @@ const DataScreen = ({ navigation, route }: any) => {
     }
   };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { paddingTop: insets.top + 40 },
+      ]}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>Tell us about you</Text>
         <Text style={styles.subtitle}>

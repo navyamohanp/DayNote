@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import React, { useState, useMemo } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import SvgImage from '../../../utilities/svgIcons';
 import { colors } from '../../../themes';
@@ -23,6 +24,7 @@ interface JournalEntry {
 }
 
 const Journal = () => {
+  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
   const [menu, setMenu] = useState<number | null>(null);
 
@@ -191,7 +193,7 @@ const Journal = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Journals</Text>

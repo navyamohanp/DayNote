@@ -1,7 +1,8 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
-import {styles} from './styles';
-import {colors} from '../../themes';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { styles } from './styles';
+import { colors } from '../../themes';
 import SvgImage from '../../utilities/svgIcons';
 
 interface BackIconProps {
@@ -21,8 +22,9 @@ export const Header = ({
   onBack,
   isdelete,
 }: BackIconProps) => {
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.textContainer}>
         <TouchableOpacity
           style={styles.backIcon}
@@ -32,7 +34,8 @@ export const Header = ({
             } else if (navigation && navigation.pop) {
               navigation.pop();
             }
-          }}>
+          }}
+        >
           <SvgImage
             icon={'headerBack'}
             height={18}
@@ -43,7 +46,8 @@ export const Header = ({
         <Text
           allowFontScaling={false}
           numberOfLines={1}
-          style={[styles.headerText, isdelete && {width: 200}]}>
+          style={[styles.headerText, isdelete && { width: 200 }]}
+        >
           {title}
         </Text>
       </View>
@@ -54,7 +58,8 @@ export const Header = ({
             if (rightButtonPress) {
               rightButtonPress();
             }
-          }}>
+          }}
+        >
           <SvgImage
             icon={isdelete ? 'delete' : 'headerAdd'}
             height={isdelete ? 24 : 16}
@@ -66,8 +71,9 @@ export const Header = ({
             allowFontScaling={false}
             style={[
               styles.rightButtonText,
-              isdelete && {color: colors.notificationRed},
-            ]}>
+              isdelete && { color: colors.notificationRed },
+            ]}
+          >
             {rightButton}
           </Text>
         </TouchableOpacity>

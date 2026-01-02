@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import CustomTextInput from '../../../components/textInput';
 import { styles } from './styles';
@@ -8,6 +9,7 @@ import { validateSignup } from '../../../utilities/validations';
 import Toaster from '../../../components/toasts/helper';
 
 const SignUp = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,7 +48,7 @@ const SignUp = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Create Account,</Text>
         <Text style={styles.subtitle}>Sign up to get started!</Text>

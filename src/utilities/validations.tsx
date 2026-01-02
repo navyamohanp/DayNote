@@ -72,3 +72,30 @@ export const validateLogin = (email: string, password: string) => {
     errors,
   };
 };
+
+export const validateResetPassword = (
+  password: string,
+  confirmPassword: string,
+) => {
+  const errors: { password?: string; confirmPassword?: string } = {};
+
+  if (!password) {
+    errors.password = 'Password is required.';
+  } else if (password.length < 8) {
+    errors.password = 'Password must be at least 8 characters long.';
+  } else if (!strongPasswordRegex.test(password)) {
+    errors.password =
+      'Password must include uppercase, lowercase, number, and special character.';
+  }
+
+  if (!confirmPassword) {
+    errors.confirmPassword = 'Confirm Password is required.';
+  } else if (password !== confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match.';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
+};
