@@ -90,7 +90,7 @@ exports.refreshToken = async (refreshToken) => {
     throw new Error("Invalid refresh token");
   }
 
-  // Generate new access token
+  // Generate new token
   const newAccessToken = generateAccessToken(user._id);
   const newRefreshToken = generateRefreshToken(user._id);
   user.refreshToken = newRefreshToken;
@@ -99,4 +99,80 @@ exports.refreshToken = async (refreshToken) => {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
   };
+};
+
+exports.forgotPassword = async ({ email }) => {
+  if (!email) {
+    throw new Error("Email is required");
+  }
+  const user = await User.findOne({ email, isDeleted: false });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Generate 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  user.resetOtp = otp;
+  user.resetOtpExpires = Date.now() + 10 * 60 * 1000;
+
+  await user.save();
+
+  return {
+    email: user.email,
+    otp,
+    expiresIn: "10 minutes",
+  };
+};
+
+exports.verifyOtp = async ({ email, otp }) => {
+  if (!email || !otp) {
+    throw new Error("Email and OTP are required");
+  }
+
+  const user = await User.findOne({
+    email,
+    isDeleted: false,
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (
+    !user.resetOtp ||
+    !user.resetOtpExpires ||
+    user.resetOtpExpires < Date.now()
+  ) {
+    throw new Error("OTP expired");
+  }
+
+  if (user.resetOtp !== otp) {
+    throw new Error("Invalid OTP");
+  }
+
+  user.resetOtp = null;
+  user.resetOtpExpires = null;
+
+  await user.save();
+
+  return {
+    email: user.email,
+    verified: true,
+  };
+};
+
+exports.resetPassword = async ({ email, password }) => {
+  const user = await User.findOne({ email, isDeleted: false });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  user.password = password;
+
+  user.resetOtp = null;
+  user.resetOtpExpires = null;
+
+  await user.save();
 };

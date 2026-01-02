@@ -133,3 +133,80 @@ exports.refresh = async (req, res) => {
     });
   }
 };
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const data = await userService.forgotPassword({
+      email,
+    });
+
+    res.status(200).json({
+      code: 200,
+      message: `OTP sent successfully. Your OTP is ${data.otp}`,
+      data,
+    });
+  } catch (error) {
+    if (error.message === "User not found") {
+      return res.status(404).json({
+        code: 404,
+        message: "User not found",
+      });
+    }
+
+    if (error.message === "Email is required") {
+      return res.status(400).json({
+        code: 400,
+        message: error.message,
+      });
+    }
+    console.error(error);
+    res.status(500).json({
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const data = await userService.verifyOtp({ email, otp });
+
+    res.status(200).json({
+      code: 200,
+      message: "OTP verified successfully",
+      data,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res.status(400).json({
+      message: "Email and new password are required",
+    });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword.trim(), 10);
+
+    await userService.resetPassword({
+      email: email.trim(),
+      password: hashedPassword,
+    });
+
+    res.status(200).json({
+      code: 200,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
