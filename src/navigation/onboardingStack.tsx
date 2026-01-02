@@ -28,7 +28,7 @@ const OnboardingStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{ ...navigationConfig, gestureEnabled: false }}
-      initialRouteName={'ForgotPassword'}
+      initialRouteName={'Login'}
     >
       <Stack.Screen
         name="Signup"

@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   lockImageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 40,
+    marginVertical: 30,
   },
   lockImage: {
     width: 150,

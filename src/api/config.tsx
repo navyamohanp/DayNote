@@ -19,6 +19,9 @@ export const apiEndpoints = {
   login: baseURL + routes.auth + 'login',
   dataCollection: baseURL + routes.auth + 'data/',
   refreshToken: baseURL + routes.auth + 'refresh',
+  forgot: baseURL + routes.auth + 'forgot',
+  verify: baseURL + routes.auth + 'verify',
+  resetPassword: baseURL + routes.auth + 'reset-password',
 };
 
 export type APIDataType = {

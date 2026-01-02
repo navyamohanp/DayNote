@@ -16,7 +16,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OtpBox from '../../../components/otpBox';
 import styles from './styles';
 import SvgImage from '../../../utilities/svgIcons';
+import Toaster from '../../../components/toasts/helper';
 import { colors } from '../../../themes';
+import { verifyOtpApi } from '../../../api/authAPI';
 
 const Verification = ({ navigation, route }: any) => {
   const dispatch = useDispatch();
@@ -39,29 +41,20 @@ const Verification = ({ navigation, route }: any) => {
   const validateOTP = async (enteredOtp: string) => {
     setLoading(true);
     try {
-      //   const response = await verifyOtpApi({
-      //     email: email,
-      //     otp: enteredOtp,
-      //   });
-      //   if (response.success) {
-      //     setIsValid(true);
-      //     setSuccess(true);
-      //     await setProfileCompleted(response.data.user.completeProfile);
-      //     await saveAuthToken(response.data.tokens.access.token);
-      //     await saveRefreshToken(response.data.tokens.refresh.token);
-      //     if (response.data.user.completeProfile) {
-      //       setTimeout(() => {
-      //         dispatch(login());
-      //       }, 500);
-      //     } else {
-      //       setTimeout(() => {
-      //         navigation.replace('DataCollectionScreen');
-      //       }, 500);
-      //     }
-      //   } else {
-      //     setIsValid(false);
-      //   }
+      const response = await verifyOtpApi({
+        email: email,
+        otp: enteredOtp,
+      });
+      if (response.code === 200) {
+        Toaster.showToast(response.message, 'successToast');
+        navigation.navigate('ResetPassword', { email });
+      } else {
+        Toaster.showToast(response.message, 'errorToast');
+
+        setIsValid(false);
+      }
     } catch (error) {
+      Toaster.showToast(error.message, 'errorToast');
       setIsValid(false);
     } finally {
       setLoading(false);
@@ -86,9 +79,11 @@ const Verification = ({ navigation, route }: any) => {
   };
 
   const submitOtp = () => {
-    if (otp.length === 4) {
-      validateOTP(otp.join(''));
-      navigation.navigate('ResetPassword');
+    const combinedOtp = otp.join('');
+    if (combinedOtp.length === 4) {
+      validateOTP(combinedOtp);
+
+      // navigation.navigate('ResetPassword');
     } else {
       setIsValid(false);
     }
@@ -115,11 +110,7 @@ const Verification = ({ navigation, route }: any) => {
         <Text style={styles.headerTitle}>Verification</Text>
       </View>
       <View style={styles.lockImageContainer}>
-        <Image
-          source={require('../../../assets/images/verification_lock.png')}
-          style={styles.lockImage}
-          resizeMode="contain"
-        />
+        <SvgImage icon="verification" height={130} width={130} />
       </View>
       <View style={styles.titleContainer}>
         <Text allowFontScaling={false} style={styles.verificationTitleText}>

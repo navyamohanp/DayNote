@@ -8,8 +8,10 @@ import { styles } from './styles';
 import { validateResetPassword } from '../../../utilities/validations';
 import Toaster from '../../../components/toasts/helper';
 import SvgImage from '../../../utilities/svgIcons';
+import { resetPasswordApi } from '../../../api/authAPI';
 
-const ResetPassword = ({ navigation }: any) => {
+const ResetPassword = ({ navigation, route }: any) => {
+  const email = route.params.email;
   const insets = useSafeAreaInsets();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +20,7 @@ const ResetPassword = ({ navigation }: any) => {
     confirmPassword?: string;
   }>({});
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     const { isValid, errors: validationErrors } = validateResetPassword(
       password,
       confirmPassword,
@@ -30,9 +32,19 @@ const ResetPassword = ({ navigation }: any) => {
     }
 
     setErrors({});
-    // Logic for reset password API call would go here
-    Toaster.showToast('Password reset successfully', 'successToast');
-    navigation.navigate('Login');
+
+    try {
+      const response = await resetPasswordApi({
+        email: email,
+        password: confirmPassword,
+      });
+      if (response.code === 200) {
+        Toaster.showToast(response.message, 'successToast');
+        navigation.navigate('Login');
+      }
+    } catch (error) {
+      Toaster.showToast('Something went wrong', 'errorToast');
+    }
   };
 
   return (

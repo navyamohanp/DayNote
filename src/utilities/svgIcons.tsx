@@ -14,6 +14,7 @@ import {
   deleteIcon,
   edit,
   menu,
+  verification,
 } from '../resources/svg/mainSvg';
 
 const IMAGES = {
@@ -30,6 +31,7 @@ const IMAGES = {
   delete: deleteIcon,
   edit: edit,
   menu: menu,
+  verification: verification,
 };
 
 export type IconsType =
@@ -45,7 +47,8 @@ export type IconsType =
   | 'filter'
   | 'delete'
   | 'edit'
-  | 'menu';
+  | 'menu'
+  | 'verification';
 
 /**
  * @param {string} icon Icon name

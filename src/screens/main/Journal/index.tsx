@@ -193,7 +193,7 @@ const Journal = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
+    <View style={[styles.container]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Journals</Text>

@@ -126,3 +126,82 @@ export const loginApi = async ({ email, password }: loginApiType) => {
       });
   });
 };
+
+export type forgotPasswordApiType = {
+  email: string;
+};
+
+export const forgotPasswordApi = async ({ email }: forgotPasswordApiType) => {
+  return new Promise((resolve, reject) => {
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.forgot,
+      paramsType: 'raw',
+      params: {
+        email: email,
+      },
+    };
+    apiManager(apiData)
+      .then((response: any) => {
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};
+
+export type verifyOtpApiType = {
+  email: string;
+  otp: string;
+};
+
+export const verifyOtpApi = async ({ email, otp }: verifyOtpApiType) => {
+  return new Promise((resolve, reject) => {
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.verify,
+      paramsType: 'raw',
+      params: {
+        email: email,
+        otp: otp,
+      },
+    };
+    apiManager(apiData)
+      .then((response: any) => {
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};
+
+export type resetPasswordApiType = {
+  email: string;
+  password: string;
+};
+
+export const resetPasswordApi = async ({
+  email,
+  password,
+}: resetPasswordApiType) => {
+  return new Promise((resolve, reject) => {
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.resetPassword,
+      paramsType: 'raw',
+      params: {
+        email: email,
+        newPassword: password,
+      },
+    };
+    apiManager(apiData)
+      .then((response: any) => {
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};

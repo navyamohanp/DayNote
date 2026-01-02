@@ -112,3 +112,71 @@ export const deleteIcon = `
 </svg>
 
 `;
+
+export const verification = `<svg
+  width="200"
+  height="200"
+  viewBox="0 0 200 200"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="100" fill="#FF6584" />
+
+  <!-- Shield outline -->
+  <path
+    d="M100 36
+       C78 36 58 48 58 68
+       V78
+       H52
+       C48 78 45 81 45 85
+       V132
+       C45 150 65 165 100 175
+       C135 165 155 150 155 132
+       V85
+       C155 81 152 78 148 78
+       H142
+       V68
+       C142 48 122 36 100 36Z"
+    stroke="white"
+    stroke-width="6"
+    fill="none"
+    stroke-linejoin="round"
+  />
+
+  <!-- Lock body -->
+  <rect
+    x="78"
+    y="88"
+    width="44"
+    height="40"
+    rx="6"
+    stroke="white"
+    stroke-width="6"
+    fill="none"
+  />
+
+  <!-- Lock shackle -->
+  <path
+    d="M86 88
+       V74
+       C86 64 94 56 100 56
+       C106 56 114 64 114 74
+       V88"
+    stroke="white"
+    stroke-width="6"
+    fill="none"
+    stroke-linecap="round"
+  />
+
+  <!-- Check mark -->
+  <path
+    d="M88 108
+       L96 116
+       L112 100"
+    stroke="white"
+    stroke-width="6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>`;

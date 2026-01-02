@@ -6,21 +6,15 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: 20,
+    paddingHorizontal: 24,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
     paddingTop: 20,
   },
   header: {
     marginBottom: 40,
     marginTop: 20,
-  },
-  title: {
-    fontSize: fontSize.size24,
-    fontFamily: font.nunitoBold,
-    color: colors.black,
   },
   subtitle: {
     fontSize: fontSize.size15,
@@ -31,11 +25,16 @@ export const styles = StyleSheet.create({
   form: {
     marginBottom: 30,
   },
-  headerConten: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-
-    backgroundColor: 'red',
+    marginTop: 20,
+  },
+  headerTitle: {
+    fontSize: fontSize.size24,
+    fontFamily: font.nunitoBold,
+    color: colors.black,
+    marginLeft: 10,
   },
   submitButton: {
     //  marginTop: 20,
