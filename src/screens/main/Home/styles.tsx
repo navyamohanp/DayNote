@@ -72,4 +72,11 @@ export const styles = StyleSheet.create({
     color: colors.viewAllLink,
     fontFamily: font.nunitoRegular,
   },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: colors.textSecondary,
+    fontFamily: font.nunitoRegular,
+    fontSize: 14,
+  },
 });

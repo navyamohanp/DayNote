@@ -29,7 +29,7 @@ export const apiManager = async ({
   endPoint = '',
   paramsType = 'default',
   headerType = 'default',
-}: APIDataType): any => {
+}: APIDataType): Promise<any> => {
   const apiURL = endPoint;
   console.log(apiURL, '');
 
@@ -101,19 +101,22 @@ export const apiManager = async ({
     };
   }
 
+  console.log('Access Token:', accessToken);
+  console.log('API Request:', apiURL, fetchParams);
+
   const isConnected = await NetInfo.fetch().then(state => state.isConnected);
 
   return new Promise((resolve, reject) => {
     const isAuthApi =
       apiURL === apiEndpoints.login || apiURL === apiEndpoints.refreshToken;
     // Helper function to process the response
-    const processResponse = response => {
+    const processResponse = (response: any) => {
       if (response.status === 401 && !isAuthApi) {
         // Token refresh logic
         getUpdatedToken()
           .then(newToken => {
             console.log('New access token received:', newToken);
-            fetchParams.headers.Authorization = `Bearer ${newToken}`;
+            (fetchParams as any).headers.Authorization = `Bearer ${newToken}`;
             // Retry the original request with the new access token
             fetch(apiURL, fetchParams).then(retryResponse => {
               if (retryResponse.status !== 401) {
@@ -170,10 +173,16 @@ export const apiManager = async ({
   });
 };
 
-const handleResponse = (response, resolve, reject, fetchParams, apiURL) => {
+const handleResponse = (
+  response: any,
+  resolve: (value: any) => void,
+  reject: (reason?: any) => void,
+  fetchParams: any,
+  apiURL: string,
+) => {
   response
     .json()
-    .then(async responseData => {
+    .then(async (responseData: any) => {
       resolve(responseData);
     })
     .catch(error => {

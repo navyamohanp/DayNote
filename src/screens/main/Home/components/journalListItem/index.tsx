@@ -42,7 +42,7 @@ const JournalListItem: React.FC<JournalListItemProps> = ({
           </View>
         </View>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.preview} numberOfLines={2}>
+        <Text style={styles.preview} numberOfLines={5}>
           {preview}
         </Text>
         <Text style={styles.editedTime}>Edited at {editedTime}</Text>

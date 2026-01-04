@@ -21,6 +21,7 @@ import Journal from '../screens/main/Journal';
 import ChangePassword from '../screens/main/ChangePassword';
 import AddJournal from '../screens/main/addJournal';
 import EditJournal from '../screens/main/editJournal';
+import EditProfile from '../screens/main/editProfile';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -54,6 +55,13 @@ const MainStack = () => {
       <Stack.Screen
         name="EditJournal"
         component={EditJournal}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
         options={{
           headerShown: false,
         }}

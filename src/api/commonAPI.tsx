@@ -3,21 +3,21 @@ import { APIDataType, apiEndpoints } from './config';
 
 export type EditProfileApiType = {
   name?: string;
-  email?: string;
   username?: string;
   age?: string;
-
   gender?: string;
 };
 
 export const editProfileApi = async (data: EditProfileApiType) => {
   return new Promise((resolve, reject) => {
     const apiData: APIDataType = {
-      method: 'put',
+      method: 'patch',
       endPoint: apiEndpoints.editProfile,
       paramsType: 'raw',
       params: data,
     };
+
+    console.log(apiData.params, '=========api');
     apiManager(apiData)
       .then((response: any) => {
         resolve(response);

@@ -27,19 +27,16 @@ export const createJournalApi = async (data: CreateJournalApiType) => {
   });
 };
 
-export const getJournalsApi = async () => {
+export const getJournalsApi = async (page: number = 1, limit: number = 5) => {
   return new Promise((resolve, reject) => {
     const apiData: APIDataType = {
       method: 'get',
-      endPoint: apiEndpoints.getJournals,
+      endPoint: `${apiEndpoints.getJournals}?page=${page}&limit=${limit}`,
     };
+
     apiManager(apiData)
-      .then((response: any) => {
-        resolve(response);
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
+      .then((response: any) => resolve(response))
+      .catch((error: any) => reject(error));
   });
 };
 

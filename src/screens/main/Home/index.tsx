@@ -1,5 +1,11 @@
-import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import React, { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import EntryCard from '../../../components/entryCard';
@@ -7,52 +13,100 @@ import JournalListItem from './components/journalListItem';
 import StreakCard from '../../../components/streakCard';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import { getJournalsApi } from '../../../api/journalAPI';
+import { useFocusEffect } from '@react-navigation/native';
+import { colors } from '../../../themes';
+
+interface JournalEntry {
+  _id: string;
+  title: string;
+  content: string;
+  mood: string;
+  journalDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const Home = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const userData = useSelector(
     (state: RootState) => state.authentication.userData,
   );
-  console.log(userData);
-  // Sample data for recent journals
-  const recentJournals = [
-    {
-      id: '1',
-      date: 'Dec 31',
-      title: "Spent New Year's Eve with friends",
-      preview: 'Feeling grateful for the good times...',
-      mood: '🙂',
-      editedTime: '9:12 PM',
-    },
-    {
-      id: '2',
-      date: 'Dec 31',
-      title: 'Feeling a bit overwhelmed today,',
-      preview: 'but hopeful for a better tomorrow.',
-      mood: '😐',
-      editedTime: '5:45 PM',
-    },
-  ];
+
+  const [journals, setJournals] = useState<JournalEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchJournals = async () => {
+    setLoading(true);
+    try {
+      const response: any = await getJournalsApi(1, 5);
+      console.log(response, 'response');
+      if (response?.code === 200) {
+        setJournals(response.data);
+      }
+    } catch (error) {
+      console.log('Error fetching journals:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchJournals();
+    }, []),
+  );
 
   const handleWriteNow = () => {
     navigation.navigate('AddJournal');
   };
 
-  const handleJournalPress = (id: string) => {
-    console.log('Open journal:', id);
+  const handleJournalPress = (journal: JournalEntry) => {
+    navigation.navigate('EditJournal', journal);
   };
 
   const handleViewAll = () => {
-    console.log('Navigate to all journals');
+    navigation.navigate('Journal');
+  };
+
+  const getMoodEmoji = (moodValue: string) => {
+    const moods = [
+      { value: 'sad', emoji: '😔' },
+      { value: 'neutral', emoji: '🙂' },
+      { value: 'happy', emoji: '😊' },
+      { value: 'very_happy', emoji: '🤩' },
+    ];
+    const mood = moods.find(m => m.value === moodValue);
+    return mood ? mood.emoji : '🙂';
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + 20 },
+          {
+            paddingTop: 10,
+            paddingBottom: insets.bottom + 100,
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -70,9 +124,6 @@ const Home = ({ navigation }: any) => {
           </View>
         </View>
 
-        {/* Mood Selector */}
-        {/* <MoodSelector /> */}
-
         {/* Streak Card */}
         <StreakCard streakDays={5} />
 
@@ -87,17 +138,29 @@ const Home = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
 
-          {recentJournals.map(journal => (
-            <JournalListItem
-              key={journal.id}
-              date={journal.date}
-              title={journal.title}
-              preview={journal.preview}
-              mood={journal.mood}
-              editedTime={journal.editedTime}
-              onPress={() => handleJournalPress(journal.id)}
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color={colors.primaryPink}
+              style={{ marginTop: 20 }}
             />
-          ))}
+          ) : journals.length > 0 ? (
+            journals.map(journal => (
+              <JournalListItem
+                key={journal._id}
+                date={formatDate(journal.journalDate)}
+                title={journal.title}
+                preview={journal.content}
+                mood={getMoodEmoji(journal.mood)}
+                editedTime={formatTime(journal.updatedAt)}
+                onPress={() => handleJournalPress(journal)}
+              />
+            ))
+          ) : (
+            <Text style={styles.emptyText}>
+              No journals yet. Start writing!
+            </Text>
+          )}
         </View>
       </ScrollView>
     </View>

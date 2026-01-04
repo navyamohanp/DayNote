@@ -24,31 +24,80 @@ const Journal = ({ navigation }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [menu, setMenu] = useState<number | null>(null);
 
-  // Sample journal data
   const [journals, setJournals] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchJournals = async () => {
-    setLoading(true);
+  const fetchJournals = async (
+    pageNum: number = 1,
+    isLoadMore: boolean = false,
+  ) => {
+    console.log('fetchJournals called:', {
+      pageNum,
+      isLoadMore,
+      loading,
+      loadingMore,
+      hasMore,
+    });
+    if (pageNum === 1) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+
     try {
-      const response: any = await getJournalsApi();
+      const response: any = await getJournalsApi(pageNum, 7);
+      console.log('API Response:', response);
 
       if (response?.code === 200) {
-        setJournals(response.data);
+        const newJournals = response.data;
+        if (isLoadMore) {
+          setJournals(prev => [...prev, ...newJournals]);
+        } else {
+          setJournals(newJournals);
+        }
+
+        // Check if we have more pages
+        const pagination = response.pagination;
+        if (pagination) {
+          setHasMore(pagination.page < pagination.totalPages);
+        } else {
+          setHasMore(newJournals.length === 5);
+        }
       }
     } catch (error) {
       console.log('Error fetching journals:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
       setMenu(null);
-      fetchJournals();
+      setPage(1);
+      setHasMore(true);
+      fetchJournals(1, false);
     }, []),
   );
+
+  const handleLoadMore = () => {
+    console.log('handleLoadMore triggered', {
+      loading,
+      loadingMore,
+      hasMore,
+      page,
+    });
+    if (!loading && !loadingMore && hasMore) {
+      const nextPage = page + 1;
+      console.log('Fetching next page:', nextPage);
+      setPage(nextPage);
+      fetchJournals(nextPage, true);
+    }
+  };
 
   const filteredJournals = useMemo(() => {
     return journals.filter(
@@ -58,21 +107,26 @@ const Journal = ({ navigation }: any) => {
     );
   }, [searchQuery, journals]);
 
-  // const handleFilter = () => {
-  //   Alert.alert('Filter', 'Filter functionality coming soon!');
-  // };
-
   const handleAddJournal = () => {
     navigation.navigate('AddJournal');
   };
 
   const handleDelete = async (id: string) => {
     const res = await deleteJournalApi(id);
-    console.log(res, '=======res');
     if (res?.code === 200) {
       Toaster.showToast('Journal deleted successfully', 'successToast');
-      fetchJournals();
+      setPage(1);
+      fetchJournals(1, false);
     }
+  };
+
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return (
+      <View style={{ paddingVertical: 20 }}>
+        <ActivityIndicator size="small" color={colors.primaryPink} />
+      </View>
+    );
   };
 
   const renderItem = ({
@@ -209,33 +263,6 @@ const Journal = ({ navigation }: any) => {
         <Text style={styles.headerTitle}>My Journals</Text>
       </View>
 
-      {/* Search and Filter Bar 
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <SvgImage
-            icon={'search'}
-            height={20}
-            width={20}
-            color={colors.gray}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search journals..."
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-        <TouchableOpacity style={styles.filterButton} onPress={handleFilter}>
-          <SvgImage
-            icon={'filter'}
-            height={18}
-            width={18}
-            color={colors.gray}
-          />
-        </TouchableOpacity>
-      </View>*/}
-
       {/* Journal List */}
       {loading ? (
         <View style={styles.emptyContainer}>
@@ -248,6 +275,9 @@ const Journal = ({ navigation }: any) => {
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>No journals found</Text>

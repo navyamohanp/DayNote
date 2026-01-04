@@ -22,7 +22,6 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
-  const [comingSoonVisible, setComingSoonVisible] = useState(false);
 
   const userData = useSelector(
     (state: RootState) => state.authentication.userData,
@@ -167,7 +166,7 @@ const Profile = () => {
           <View style={styles.infoCard}>
             <TouchableOpacity
               style={styles.actionItem}
-              onPress={() => setComingSoonVisible(true)}
+              onPress={() => navigation.navigate('EditProfile')}
             >
               <View
                 style={[styles.iconContainer, { backgroundColor: '#F0F7FF' }]}
@@ -276,24 +275,6 @@ const Profile = () => {
           },
         ]}
         loading={loading}
-        buttonColor={colors.primaryPink}
-      />
-
-      {/* Coming Soon Popup */}
-      <Popup
-        visible={comingSoonVisible}
-        title="Coming Soon"
-        message="Edit Profile functionality coming soon!"
-        titleColor={colors.primaryPink}
-        icon="edit"
-        onClose={() => setComingSoonVisible(false)}
-        buttons={[
-          {
-            text: 'OK',
-            onPress: () => setComingSoonVisible(false),
-            style: 'primary',
-          },
-        ]}
         buttonColor={colors.primaryPink}
       />
     </View>
