@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
-import {colors, font, fontSize} from '../../themes';
-import {heightRatio} from '../../utilities/dimensions';
+import { StyleSheet } from 'react-native';
+import { colors, font, fontSize } from '../../themes';
+import { heightRatio } from '../../utilities/dimensions';
 
 export const styles = StyleSheet.create({
   overlay: {
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: colors.primaryPink,
   },
   blackButton: {
     backgroundColor: colors.lightblack2,
@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
   },
   secondaryText: {
-    color: colors.secondary,
+    color: colors.black,
   },
   optionalMsgContainer: {
     justifyContent: 'center',

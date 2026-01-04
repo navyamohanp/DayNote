@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
-import {styles} from './styles';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { styles } from './styles';
 import SvgImage from '../../utilities/svgIcons';
-import {widthRatio} from '../../utilities/dimensions';
+import { widthRatio } from '../../utilities/dimensions';
 import strings from '../../utilities/strings';
 import Modal from 'react-native-modal';
 
@@ -81,11 +81,13 @@ const Popup: React.FC<PopupProps> = ({
               icon={icon}
               height={54 * widthRatio}
               width={54 * widthRatio}
+              strokeColor={titleColor}
             />
           )}
           <Text
             allowFontScaling={false}
-            style={[styles.title, {color: titleColor}]}>
+            style={[styles.title, { color: titleColor }]}
+          >
             {title}
           </Text>
           <Text allowFontScaling={false} style={styles.message}>
@@ -94,14 +96,16 @@ const Popup: React.FC<PopupProps> = ({
           {message2 && (
             <Text
               allowFontScaling={false}
-              style={message3 ? styles.message : styles.message4}>
+              style={message3 ? styles.message : styles.message4}
+            >
               {message2}
             </Text>
           )}
           {message3 && (
             <Text
               allowFontScaling={false}
-              style={message4 ? styles.message : styles.message4}>
+              style={message4 ? styles.message : styles.message4}
+            >
               {message3}
             </Text>
           )}
@@ -111,23 +115,6 @@ const Popup: React.FC<PopupProps> = ({
             </Text>
           )}
 
-          {optionalMessage1 && (
-            <View style={styles.optionalMsgContainer}>
-              <View style={{flexDirection: 'row'}}>
-                <Text allowFontScaling={false} style={styles.boldText}>
-                  {strings.Popup.Important}
-                </Text>
-                <Text allowFontScaling={false} style={styles.message2}>
-                  {strings.Popup.Irreversible}
-                </Text>
-              </View>
-              <Text allowFontScaling={false} style={styles.message2}>
-                {optionalMessage1}
-              </Text>
-              {/* <Text style={styles.message2}>{optionalMessage2}</Text>
-              <Text style={styles.message2}>{optionalMessage3}</Text> */}
-            </View>
-          )}
           <View style={styles.buttonContainer}>
             {buttons.map((button, index) => (
               <TouchableOpacity
@@ -141,7 +128,8 @@ const Popup: React.FC<PopupProps> = ({
                         backgroundColor: buttonColor ? buttonColor : titleColor,
                       }
                     : styles.secondaryButton,
-                ]}>
+                ]}
+              >
                 <Text
                   allowFontScaling={false}
                   style={[
@@ -149,7 +137,8 @@ const Popup: React.FC<PopupProps> = ({
                     button.style === 'primary'
                       ? styles.primaryText
                       : styles.secondaryText,
-                  ]}>
+                  ]}
+                >
                   {button.text}
                 </Text>
                 {loading && index === 1 && (

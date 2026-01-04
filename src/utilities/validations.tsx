@@ -99,6 +99,43 @@ export const validateResetPassword = (
     errors,
   };
 };
+
+export const validateChangePassword = (
+  oldPassword: string,
+  newPassword: string,
+  confirmPassword: string,
+) => {
+  const errors: {
+    oldPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  } = {};
+
+  if (!oldPassword) {
+    errors.oldPassword = 'Old password is required.';
+  }
+
+  if (!newPassword) {
+    errors.newPassword = 'New password is required.';
+  } else if (newPassword.length < 8) {
+    errors.newPassword = 'Password must be at least 8 characters long.';
+  } else if (!strongPasswordRegex.test(newPassword)) {
+    errors.newPassword =
+      'Password must include uppercase, lowercase, number, and special character.';
+  }
+
+  if (!confirmPassword) {
+    errors.confirmPassword = 'Confirm Password is required.';
+  } else if (newPassword !== confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match.';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
+};
+
 type JournalErrors = {
   title?: string;
   journalDate?: string;

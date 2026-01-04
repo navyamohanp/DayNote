@@ -6,23 +6,17 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightgray,
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 8,
-    transform: [{ rotate: '180deg' }],
-  },
+
   headerTitle: {
-    fontSize: fontSize.ultraLarge,
+    fontSize: 24,
     fontFamily: font.nunitoBold,
     color: colors.black,
+    marginLeft: 10,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 24,
   },
   form: {
     padding: 24,

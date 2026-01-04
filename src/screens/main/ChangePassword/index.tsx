@@ -16,7 +16,7 @@ import CustomTextInput from '../../../components/textInput';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import { changePasswordApi } from '../../../api/authAPI';
 import Toaster from '../../../components/toasts/helper';
-import { validateResetPassword } from '../../../utilities/validations';
+import { validateChangePassword } from '../../../utilities/validations';
 
 const ChangePassword = () => {
   const insets = useSafeAreaInsets();
@@ -28,57 +28,49 @@ const ChangePassword = () => {
   const [errors, setErrors] = useState<any>({});
 
   const handleSubmit = async () => {
-    const validationErrors = validateResetPassword(
+    const { isValid, errors: validationErrors } = validateChangePassword(
+      oldPassword,
       newPassword,
       confirmPassword,
     );
-    if (Object.keys(validationErrors).length > 0) {
+
+    if (!isValid) {
       setErrors(validationErrors);
       return;
     }
 
-    if (!oldPassword) {
-      setErrors({ oldPassword: 'Old password is required' });
-      return;
-    }
-
     setLoading(true);
-    try {
-      const response: any = await changePasswordApi({
-        oldPassword,
-        newPassword,
-      });
+    // try {
+    //   const response: any = await changePasswordApi({
+    //     oldPassword,
+    //     newPassword,
+    //   });
 
-      if (response.code === 200) {
-        Toaster.showToast('Password changed successfully', 'successToast');
-        navigation.goBack();
-      } else {
-        Toaster.showToast(
-          response.message || 'Failed to change password',
-          'errorToast',
-        );
-      }
-    } catch (error) {
-      console.log('Change password error:', error);
-      Toaster.showToast('Something went wrong', 'errorToast');
-    } finally {
-      setLoading(false);
-    }
+    //   if (response.code === 200) {
+    //     Toaster.showToast('Password changed successfully', 'successToast');
+    //     navigation.goBack();
+    //   } else {
+    //     Toaster.showToast(
+    //       response.message || 'Failed to change password',
+    //       'errorToast',
+    //     );
+    //   }
+    // } catch (error) {
+    //   console.log('Change password error:', error);
+    //   Toaster.showToast('Something went wrong', 'errorToast');
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <SvgImage icon="back" height={24} width={24} color={colors.black} />
+
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <SvgImage icon="back" height={18} width={18} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Change Password</Text>
         </View>
@@ -108,10 +100,10 @@ const ChangePassword = () => {
               value={newPassword}
               onChangeText={text => {
                 setNewPassword(text);
-                setErrors({ ...errors, password: '' });
+                setErrors({ ...errors, newPassword: '' });
               }}
               secureTextEntry
-              error={errors.password}
+              error={errors.newPassword}
             />
           </View>
 

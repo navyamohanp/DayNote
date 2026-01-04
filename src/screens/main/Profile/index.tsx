@@ -11,66 +11,62 @@ import { colors, font } from '../../../themes';
 import { removeAllKeys } from '../../../utilities/asyncStore';
 import { deleteUserApi } from '../../../api/commonAPI';
 import { useNavigation } from '@react-navigation/native';
+import PrimaryButton from '../../../components/primaryButton/primaryButton';
+import Popup from '../../../components/popup';
+import Toaster from '../../../components/toasts/helper';
 
 const Profile = () => {
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(false);
+  const [logoutVisible, setLogoutVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  const [comingSoonVisible, setComingSoonVisible] = useState(false);
 
   const userData = useSelector(
     (state: RootState) => state.authentication.userData,
   );
-
   const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Logout',
-        onPress: async () => {
-          setLoading(true);
-          try {
-            await logoutApi();
-            await removeAllKeys();
-            dispatch(logout());
-          } catch (error) {
-            console.log('Logout error:', error);
-            await removeAllKeys();
-            dispatch(logout());
-          } finally {
-            setLoading(false);
-          }
-        },
-      },
-    ]);
+    setLogoutVisible(true);
+  };
+
+  const onLogoutPress = async () => {
+    setLoading(true);
+    try {
+      await logoutApi();
+      await removeAllKeys();
+      dispatch(logout());
+    } catch (error) {
+      console.log('Logout error:', error);
+      await removeAllKeys();
+      dispatch(logout());
+    } finally {
+      setLoading(false);
+      setLogoutVisible(false);
+    }
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'Are you sure you want to delete your account? This action is irreversible.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            setLoading(true);
-            try {
-              const response: any = await deleteUserApi();
-              if (response.code === 200) {
-                await removeAllKeys();
-                dispatch(logout());
-              }
-            } catch (error) {
-              console.log('Delete account error:', error);
-            } finally {
-              setLoading(false);
-            }
-          },
-        },
-      ],
-    );
+    setDeleteVisible(true);
+  };
+
+  const onDeletePress = async () => {
+    setLoading(true);
+    try {
+      const response: any = await deleteUserApi();
+      if (response.code === 200) {
+        Toaster.showToast(response.message, 'successToast');
+        console.log(response);
+        await removeAllKeys();
+        dispatch(logout());
+      }
+    } catch (error) {
+      console.log('Delete account error:', error);
+    } finally {
+      setLoading(false);
+      setDeleteVisible(false);
+    }
   };
 
   const capitalize = (str: string) => {
@@ -79,91 +75,227 @@ const Profile = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom }}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Profile</Text>
+        </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <Text style={styles.avatarInitial}>
               {userData?.name?.charAt(0).toUpperCase() || 'U'}
             </Text>
+            <TouchableOpacity style={styles.editAvatarButton}>
+              <SvgImage
+                icon="edit"
+                height={14}
+                width={14}
+                color={colors.white}
+              />
+            </TouchableOpacity>
           </View>
           <Text style={styles.userName}>{capitalize(userData?.name)}</Text>
           <Text style={styles.userHandle}>@{userData?.username || 'user'}</Text>
         </View>
 
         {/* Info Section */}
-        <View style={styles.infoSection}>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Personal Information</Text>
           <View style={styles.infoCard}>
             <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Email</Text>
-              <Text style={styles.infoValue}>{userData?.email || 'N/A'}</Text>
+              <View style={styles.iconContainer}>
+                <SvgImage
+                  icon="profile"
+                  height={20}
+                  width={20}
+                  color={colors.primaryPink}
+                />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Full Name</Text>
+                <Text style={styles.infoValue}>{userData?.name || 'N/A'}</Text>
+              </View>
             </View>
 
             <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Age</Text>
-              <Text style={styles.infoValue}>{userData?.age || 'N/A'}</Text>
+              <View style={styles.iconContainer}>
+                <Text style={styles.emojiIcon}>📧</Text>
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Email Address</Text>
+                <Text style={styles.infoValue}>{userData?.email || 'N/A'}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoItem}>
+              <View style={styles.iconContainer}>
+                <Text style={styles.emojiIcon}>🎂</Text>
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Age</Text>
+                <Text style={styles.infoValue}>
+                  {userData?.age || 'N/A'} years
+                </Text>
+              </View>
             </View>
 
             <View style={[styles.infoItem, styles.lastInfoItem]}>
-              <Text style={styles.infoLabel}>Gender</Text>
-              <Text style={styles.infoValue}>{userData?.gender || 'N/A'}</Text>
+              <View style={styles.iconContainer}>
+                <Text style={styles.emojiIcon}>
+                  {userData?.gender === 'Male' ? '👨' : '👩'}
+                </Text>
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Gender</Text>
+                <Text style={styles.infoValue}>
+                  {userData?.gender || 'N/A'}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
 
-        {/* Settings Section */}
-        <View style={styles.infoSection}>
-          <Text style={[styles.userHandle, { marginLeft: 4, marginBottom: 8 }]}>
-            Settings
-          </Text>
+        {/* Actions Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Account Settings</Text>
           <View style={styles.infoCard}>
             <TouchableOpacity
-              style={styles.infoItem}
-              onPress={() => navigation.navigate('ChangePassword')}
+              style={styles.actionItem}
+              onPress={() => setComingSoonVisible(true)}
             >
-              <Text
-                style={[styles.infoValue, { fontFamily: font.nunitoSemiBold }]}
+              <View
+                style={[styles.iconContainer, { backgroundColor: '#F0F7FF' }]}
               >
-                Change Password
-              </Text>
-              <SvgImage
-                icon="back"
-                height={16}
-                width={16}
-                color={colors.gray}
-              />
+                <SvgImage icon="edit" height={18} width={18} color="#007AFF" />
+              </View>
+              <Text style={styles.actionText}>Edit Profile</Text>
+              <View style={{ transform: [{ rotate: '180deg' }] }}>
+                <SvgImage icon="back" height={14} width={14} />
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.infoItem, styles.lastInfoItem]}
+              style={styles.actionItem}
+              onPress={() => navigation.navigate('ChangePassword')}
+            >
+              <View
+                style={[styles.iconContainer, { backgroundColor: '#FFF9F0' }]}
+              >
+                <SvgImage
+                  icon="verification"
+                  height={18}
+                  width={18}
+                  color="#FF9500"
+                />
+              </View>
+              <Text style={styles.actionText}>Change Password</Text>
+              <View style={{ transform: [{ rotate: '180deg' }] }}>
+                <SvgImage icon="back" height={14} width={14} />
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionItem, styles.lastInfoItem]}
               onPress={handleDeleteAccount}
             >
-              <Text
-                style={[
-                  styles.infoValue,
-                  { color: '#FF4D4D', fontFamily: font.nunitoSemiBold },
-                ]}
+              <View
+                style={[styles.iconContainer, { backgroundColor: '#FFF0F0' }]}
               >
+                <SvgImage
+                  icon="delete"
+                  height={18}
+                  width={18}
+                  color="#FF3B30"
+                />
+              </View>
+              <Text style={[styles.actionText, { color: '#FF3B30' }]}>
                 Delete Account
               </Text>
-              <SvgImage icon="back" height={16} width={16} color="#FF4D4D" />
+              <View style={{ transform: [{ rotate: '180deg' }] }}>
+                <SvgImage icon="back" height={14} width={14} />
+              </View>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Footer / Logout */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
+        <PrimaryButton
+          buttontitle="Logout"
+          onPress={handleLogout}
+          loading={loading}
+          style={styles.logoutButton}
+        />
       </ScrollView>
+
+      {/* Logout Popup */}
+      <Popup
+        visible={logoutVisible}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        titleColor={colors.primaryPink}
+        icon="logout"
+        onClose={() => setLogoutVisible(false)}
+        buttons={[
+          {
+            text: 'Cancel',
+            onPress: () => setLogoutVisible(false),
+            style: 'secondary',
+          },
+          {
+            text: 'Logout',
+            onPress: onLogoutPress,
+            style: 'primary',
+          },
+        ]}
+        loading={loading}
+      />
+
+      {/* Delete Account Popup */}
+      <Popup
+        visible={deleteVisible}
+        title="Delete Account"
+        message="Are you sure you want to delete your account? This action is irreversible."
+        titleColor={colors.primaryPink}
+        icon="delete"
+        onClose={() => setDeleteVisible(false)}
+        buttons={[
+          {
+            text: 'Cancel',
+            onPress: () => setDeleteVisible(false),
+            style: 'secondary',
+          },
+          {
+            text: 'Delete',
+            onPress: onDeletePress,
+            style: 'primary',
+          },
+        ]}
+        loading={loading}
+        buttonColor={colors.primaryPink}
+      />
+
+      {/* Coming Soon Popup */}
+      <Popup
+        visible={comingSoonVisible}
+        title="Coming Soon"
+        message="Edit Profile functionality coming soon!"
+        titleColor={colors.primaryPink}
+        icon="edit"
+        onClose={() => setComingSoonVisible(false)}
+        buttons={[
+          {
+            text: 'OK',
+            onPress: () => setComingSoonVisible(false),
+            style: 'primary',
+          },
+        ]}
+        buttonColor={colors.primaryPink}
+      />
     </View>
   );
 };
