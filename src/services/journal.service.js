@@ -47,9 +47,13 @@ exports.editJournal = async (journalId, userId, updateData) => {
   );
 };
 
-exports.getAllJournals = async (userId) => {
-  console.log("journal userif", userId);
-  return await Journal.find({ userId }).sort({ journalDate: -1 }); // latest first
+exports.getAllJournals = async (userId, skip, limit) => {
+  const [journals, total] = await Promise.all([
+    Journal.find({ userId }).sort({ journalDate: -1 }).skip(skip).limit(limit),
+    Journal.countDocuments({ userId }),
+  ]);
+
+  return { journals, total };
 };
 
 exports.deleteJournal = async (journalId, userId) => {

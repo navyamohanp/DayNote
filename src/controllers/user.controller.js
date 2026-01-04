@@ -119,3 +119,35 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.uploadProfileImage = async (req, res) => {
+  const userId = req.user.userId;
+
+  if (!req.file) {
+    return res.status(400).json({
+      message: "Profile image is required",
+    });
+  }
+
+  try {
+    const imagePath = `/uploads/profile/${req.file.filename}`;
+
+    const user = await userService.updateUser(userId, {
+      profileImage: imagePath,
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      code: 200,
+      message: "Profile image updated successfully",
+      data: {
+        profileImage: imagePath,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

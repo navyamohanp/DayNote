@@ -35,8 +35,16 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
     },
-    resetOtp: String,
-    resetOtpExpires: Date,
+    profileImage: {
+      type: String,
+    },
+    resetOtp: {
+      type: String,
+    },
+
+    resetOtpExpires: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

@@ -82,15 +82,46 @@ exports.editJournal = async (req, res) => {
   }
 };
 
+// exports.getAllJournals = async (req, res) => {
+//   const userId = req.user.userId;
+
+//   try {
+//     const journals = await journalService.getAllJournals(userId);
+
+//     res.status(200).json({
+//       code: 200,
+//       data: journals,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 exports.getAllJournals = async (req, res) => {
   const userId = req.user.userId;
 
+  const page = Math.max(parseInt(req.query.page) || 1, 1);
+  const limit = Math.min(parseInt(req.query.limit) || 10, 50);
+  const skip = (page - 1) * limit;
+
   try {
-    const journals = await journalService.getAllJournals(userId);
+    const { journals, total } = await journalService.getAllJournals(
+      userId,
+      skip,
+      limit
+    );
 
     res.status(200).json({
       code: 200,
       data: journals,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page * limit < total,
+        hasPrevPage: page > 1,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
