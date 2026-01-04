@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, { useEffect } from 'react';
 import navigationConfig from './config';
 import { Text, View, TouchableWithoutFeedback } from 'react-native';
 import { colors, font, fontSize } from '../themes';
@@ -13,9 +13,14 @@ import strings from '../utilities/strings';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUserData } from '../redux/reducers/authenticationReducer';
+import { getUserApi } from '../api/commonAPI';
 import Profile from '../screens/main/Profile';
 import Journal from '../screens/main/Journal';
+import ChangePassword from '../screens/main/ChangePassword';
+import AddJournal from '../screens/main/addJournal';
+import EditJournal from '../screens/main/editJournal';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +37,27 @@ const MainStack = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="AddJournal"
+        component={AddJournal}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditJournal"
+        component={EditJournal}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -39,7 +65,24 @@ const MainStack = () => {
 const NavBar = () => {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.min(insets.bottom, 12);
-  const navigationBlocked = useSelector(state => state?.navigation?.blocked);
+  const navigationBlocked = useSelector(
+    (state: any) => state?.navigation?.blocked,
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response: any = await getUserApi();
+        if (response.code === 200) {
+          dispatch(setUserData(response.user));
+        }
+      } catch (error) {
+        console.log('Error fetching user data in MainStack:', error);
+      }
+    };
+    fetchUserData();
+  }, [dispatch]);
   return (
     <View style={{ flex: 1, backgroundColor: colors.white }}>
       <Tab.Navigator
@@ -90,12 +133,12 @@ const NavBar = () => {
                 Home
               </Text>
             ),
-            tabBarButton: props => (
+            tabBarButton: (props: any) => (
               <TouchableWithoutFeedback
                 {...props}
-                onPress={() => {
+                onPress={e => {
                   if (!navigationBlocked && props.onPress) {
-                    props.onPress();
+                    props.onPress(e);
                   }
                 }}
               >
@@ -129,12 +172,12 @@ const NavBar = () => {
                 My Journals
               </Text>
             ),
-            tabBarButton: props => (
+            tabBarButton: (props: any) => (
               <TouchableWithoutFeedback
                 {...props}
-                onPress={() => {
+                onPress={e => {
                   if (!navigationBlocked && props.onPress) {
-                    props.onPress();
+                    props.onPress(e);
                   }
                 }}
               >
@@ -168,12 +211,12 @@ const NavBar = () => {
                 Profile
               </Text>
             ),
-            tabBarButton: props => (
+            tabBarButton: (props: any) => (
               <TouchableWithoutFeedback
                 {...props}
-                onPress={() => {
+                onPress={e => {
                   if (!navigationBlocked && props.onPress) {
-                    props.onPress();
+                    props.onPress(e);
                   }
                 }}
               >

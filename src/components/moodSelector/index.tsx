@@ -1,43 +1,53 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React, { useState } from 'react';
-import { styles } from './styles';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { colors } from '../../themes';
+import { styles } from './styles';
 
-const MoodSelector = () => {
-  const [selectedMood, setSelectedMood] = useState<number | null>(null);
+interface MoodSelectorProps {
+  selectedMood: string | null;
+  onMoodSelect: (mood: string) => void;
+  errors?: string;
+}
 
-  const moods = ['😔', '🙂', '😊', '🤩'];
+export const MoodSelector = ({
+  selectedMood,
+  onMoodSelect,
+  errors,
+}: MoodSelectorProps) => {
+  const moods = [
+    { value: 'sad', emoji: '😔' },
+    { value: 'neutral', emoji: '🙂' },
+    { value: 'happy', emoji: '😊' },
+    { value: 'very_happy', emoji: '🤩' },
+  ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Today's Mood</Text>
+    <View>
+      <View style={styles.container}>
+        <View style={styles.moodContainer}>
+          {moods.map(mood => (
+            <TouchableOpacity
+              key={mood.value}
+              style={styles.moodButton}
+              onPress={() => onMoodSelect(mood.value)}
+            >
+              {selectedMood === mood.value ? (
+                <View
+                  style={[
+                    styles.moodButtonGradient,
+                    { backgroundColor: colors.primaryPink },
+                  ]}
+                >
+                  <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+                </View>
+              ) : (
+                <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-      <View style={styles.moodContainer}>
-        {moods.map((mood, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.moodButton}
-            onPress={() => setSelectedMood(index)}
-          >
-            {selectedMood === index ? (
-              <View
-                style={[
-                  styles.moodButtonGradient,
-                  { backgroundColor: colors.primaryPink },
-                ]}
-              >
-                <Text style={styles.moodEmoji}>{mood}</Text>
-              </View>
-            ) : (
-              <Text style={styles.moodEmoji}>{mood}</Text>
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
-      <Text style={styles.subtitle}>Tap to reflect on your feelings</Text>
+
+      {errors ? <Text style={styles.errorText}>{errors}</Text> : null}
     </View>
   );
 };
-
-export default MoodSelector;

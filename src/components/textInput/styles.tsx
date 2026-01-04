@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
     paddingHorizontal: 12,
-    height: 56,
+    minHeight: 56,
   },
   input: {
     flex: 1,

@@ -32,6 +32,7 @@ export const apiManager = async ({
 }: APIDataType): any => {
   const apiURL = endPoint;
   console.log(apiURL, '');
+
   let accessToken = await getAuthToken();
   let deviceToken = await getDeviceToken();
   const deviceTimeZone = (await getDeviceTimeZone()) || 'Asia/Kolkata';

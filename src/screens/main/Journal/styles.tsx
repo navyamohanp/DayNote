@@ -210,4 +210,10 @@ export const styles = StyleSheet.create({
     fontFamily: font.nunitoRegular,
     fontStyle: 'italic',
   },
+
+  cardTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
 });

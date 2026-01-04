@@ -2,13 +2,18 @@ import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
-import MoodSelector from '../../../components/moodSelector';
 import EntryCard from '../../../components/entryCard';
 import JournalListItem from './components/journalListItem';
 import StreakCard from '../../../components/streakCard';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
-const Home = () => {
+const Home = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
+  const userData = useSelector(
+    (state: RootState) => state.authentication.userData,
+  );
+  console.log(userData);
   // Sample data for recent journals
   const recentJournals = [
     {
@@ -30,7 +35,7 @@ const Home = () => {
   ];
 
   const handleWriteNow = () => {
-    console.log('Navigate to write entry screen');
+    navigation.navigate('AddJournal');
   };
 
   const handleJournalPress = (id: string) => {
@@ -54,11 +59,14 @@ const Home = () => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Hi,</Text>
+            <Text style={styles.greeting}>
+              Hi{' '}
+              {userData?.name
+                ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1)
+                : ''}
+              ,
+            </Text>
             <Text style={styles.subGreeting}>How are you feeling today?</Text>
-          </View>
-          <View style={styles.profilePicture}>
-            <Text style={styles.profileInitial}>A</Text>
           </View>
         </View>
 

@@ -15,6 +15,7 @@ import {
   edit,
   menu,
   verification,
+  logout,
 } from '../resources/svg/mainSvg';
 
 const IMAGES = {
@@ -32,6 +33,7 @@ const IMAGES = {
   edit: edit,
   menu: menu,
   verification: verification,
+  logout: logout,
 };
 
 export type IconsType =
@@ -48,7 +50,8 @@ export type IconsType =
   | 'delete'
   | 'edit'
   | 'menu'
-  | 'verification';
+  | 'verification'
+  | 'logout';
 
 /**
  * @param {string} icon Icon name

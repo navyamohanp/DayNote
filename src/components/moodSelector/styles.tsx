@@ -1,31 +1,17 @@
 import { StyleSheet } from 'react-native';
 import colors from '../../themes/colors';
-import { font } from '../../themes';
+import { font, fontSize } from '../../themes';
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.cardBackground,
+    backgroundColor: colors.white,
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    padding: 10,
+
+    borderColor: colors.primaryPink,
+    borderWidth: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    fontFamily: font.nunitoBold,
-  },
+
   illustration: {
     width: 80,
     height: 80,
@@ -63,5 +49,11 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     fontFamily: font.nunitoRegular,
+  },
+  errorText: {
+    color: '#e74c3c',
+    fontSize: fontSize.small,
+    fontFamily: font.nunitoRegular,
+    marginTop: 4,
   },
 });

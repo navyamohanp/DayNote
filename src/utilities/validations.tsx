@@ -99,3 +99,49 @@ export const validateResetPassword = (
     errors,
   };
 };
+type JournalErrors = {
+  title?: string;
+  journalDate?: string;
+  mood?: string;
+  content?: string;
+};
+
+type JournalPayload = {
+  title: string;
+  content: string;
+  mood: string | null;
+  journalDate: string;
+};
+
+export const validateJournal = ({
+  title,
+  content,
+  mood,
+  journalDate,
+}: JournalPayload): JournalErrors => {
+  const errors: JournalErrors = {};
+
+  if (!title || title.trim() === '') {
+    errors.title = 'Title is required.';
+  } else if (title.trim().length > 100) {
+    errors.title = 'Title must be less than 100 characters.';
+  }
+
+  if (!journalDate || journalDate.trim() === '') {
+    errors.journalDate = 'Date is required.';
+  }
+
+  if (!mood) {
+    errors.mood = 'Please select a mood.';
+  }
+
+  if (!content || content.trim() === '') {
+    errors.content = 'Content is required.';
+  } else if (content.trim().length < 3) {
+    errors.content = 'Content must be at least 3 characters.';
+  } else if (content.trim().length > 500) {
+    errors.content = 'Content must be less than 500 characters.';
+  }
+
+  return errors;
+};

@@ -205,3 +205,48 @@ export const resetPasswordApi = async ({
       });
   });
 };
+
+export const logoutApi = async () => {
+  return new Promise((resolve, reject) => {
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.logout,
+      paramsType: 'raw',
+    };
+    apiManager(apiData)
+      .then((response: any) => {
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};
+export type changePasswordApiType = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+export const changePasswordApi = async ({
+  oldPassword,
+  newPassword,
+}: changePasswordApiType) => {
+  return new Promise((resolve, reject) => {
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.changePassword,
+      paramsType: 'raw',
+      params: {
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      },
+    };
+    apiManager(apiData)
+      .then((response: any) => {
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};

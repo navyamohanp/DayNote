@@ -1,73 +1,52 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  Alert,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useMemo } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { styles } from './styles';
 import SvgImage from '../../../utilities/svgIcons';
 import { colors } from '../../../themes';
 import { useFocusEffect } from '@react-navigation/native';
+import { deleteJournalApi, getJournalsApi } from '../../../api/journalAPI';
+import { ActivityIndicator } from 'react-native';
+import Toast from '../../../components/toasts';
+import Toaster from '../../../components/toasts/helper';
 
 interface JournalEntry {
-  id: string;
-  date: string;
+  _id: string;
   title: string;
-  preview: string;
+  content: string;
   mood: string;
-  editedTime: string;
+  journalDate: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-const Journal = () => {
-  const insets = useSafeAreaInsets();
+const Journal = ({ navigation }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [menu, setMenu] = useState<number | null>(null);
 
   // Sample journal data
-  const [journals, setJournals] = useState<JournalEntry[]>([
-    {
-      id: '1',
-      date: 'Dec 31',
-      title: "Spent New Year's Eve with friends",
-      preview: 'Feeling grateful for the good times...',
-      mood: '🙂',
-      editedTime: '9:12 PM',
-    },
-    {
-      id: '2',
-      date: 'Dec 31',
-      title: 'Feeling a bit overwhelmed today,',
-      preview: 'but hopeful for a better tomorrow.',
-      mood: '😐',
-      editedTime: '5:45 PM',
-    },
-    {
-      id: '3',
-      date: 'Dec 30',
-      title: 'Great day at work!',
-      preview:
-        'Completed the project ahead of schedule and got positive feedback...',
-      mood: '😊',
-      editedTime: '8:30 PM',
-    },
-    {
-      id: '4',
-      date: 'Dec 29',
-      title: 'Feeling under the weather',
-      preview: 'Not feeling my best today, took it easy and rested...',
-      mood: '😔',
-      editedTime: '6:15 PM',
-    },
-  ]);
+  const [journals, setJournals] = useState<JournalEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchJournals = async () => {
+    setLoading(true);
+    try {
+      const response: any = await getJournalsApi();
+
+      if (response?.code === 200) {
+        setJournals(response.data);
+      }
+    } catch (error) {
+      console.log('Error fetching journals:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       setMenu(null);
+      fetchJournals();
     }, []),
   );
 
@@ -75,16 +54,25 @@ const Journal = () => {
     return journals.filter(
       journal =>
         journal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        journal.preview.toLowerCase().includes(searchQuery.toLowerCase()),
+        journal.content.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [searchQuery, journals]);
 
-  const handleFilter = () => {
-    Alert.alert('Filter', 'Filter functionality coming soon!');
-  };
+  // const handleFilter = () => {
+  //   Alert.alert('Filter', 'Filter functionality coming soon!');
+  // };
 
   const handleAddJournal = () => {
-    Alert.alert('Add Journal', 'Add journal functionality coming soon!');
+    navigation.navigate('AddJournal');
+  };
+
+  const handleDelete = async (id: string) => {
+    const res = await deleteJournalApi(id);
+    console.log(res, '=======res');
+    if (res?.code === 200) {
+      Toaster.showToast('Journal deleted successfully', 'successToast');
+      fetchJournals();
+    }
   };
 
   const renderItem = ({
@@ -94,6 +82,30 @@ const Journal = () => {
     item: JournalEntry;
     index: number;
   }) => {
+    const date = new Date(item.journalDate);
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    const editedDate = new Date(item.updatedAt);
+    const formattedTime = editedDate.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    const getMoodEmoji = (moodValue: string) => {
+      const moods = [
+        { value: 'sad', emoji: '😔' },
+        { value: 'neutral', emoji: '🙂' },
+        { value: 'happy', emoji: '😊' },
+        { value: 'very_happy', emoji: '🤩' },
+      ];
+      const mood = moods.find(m => m.value === moodValue);
+      return mood ? mood.emoji : '🙂';
+    };
+
     return (
       <View>
         <TouchableOpacity
@@ -107,8 +119,9 @@ const Journal = () => {
         >
           {/* Header Section */}
           <View style={styles.cardHeader}>
-            <View>
-              <Text style={styles.cardTitle}>Titlee {item.mood}</Text>
+            <View style={styles.cardTitleContainer}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardTitle}>{getMoodEmoji(item.mood)}</Text>
             </View>
 
             <TouchableOpacity
@@ -128,10 +141,7 @@ const Journal = () => {
 
           {/* Body Section */}
           <View style={styles.cardBody}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.previewText} numberOfLines={2}>
-              {item.preview}
-            </Text>
+            <Text style={styles.previewText}>{item.content}</Text>
           </View>
 
           {/* Footer Section */}
@@ -143,10 +153,10 @@ const Journal = () => {
                 width={14}
                 strokeColor={colors.textSecondary}
               />
-              <Text style={styles.dateText}>{item.date}</Text>
+              <Text style={styles.dateText}>{formattedDate}</Text>
             </View>
 
-            <Text style={styles.editedTimeText}>Edited {item.editedTime}</Text>
+            <Text style={styles.editedTimeText}>Edited {formattedTime}</Text>
           </View>
 
           {menu === index && (
@@ -155,7 +165,7 @@ const Journal = () => {
                 style={styles.dropdownButton}
                 onPress={() => {
                   setMenu(null);
-                  Alert.alert('Edit', 'Edit functionality coming soon!');
+                  navigation.navigate('EditJournal', item);
                 }}
               >
                 <SvgImage
@@ -172,7 +182,7 @@ const Journal = () => {
                 style={styles.dropdownButton}
                 onPress={() => {
                   setMenu(null);
-                  Alert.alert('Delete', 'Delete functionality coming soon!');
+                  handleDelete(item._id);
                 }}
               >
                 <SvgImage
@@ -199,7 +209,7 @@ const Journal = () => {
         <Text style={styles.headerTitle}>My Journals</Text>
       </View>
 
-      {/* Search and Filter Bar */}
+      {/* Search and Filter Bar 
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <SvgImage
@@ -224,26 +234,32 @@ const Journal = () => {
             color={colors.gray}
           />
         </TouchableOpacity>
-      </View>
+      </View>*/}
 
       {/* Journal List */}
-      <FlatList
-        data={filteredJournals}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No journals found</Text>
-            <Text style={styles.emptySubtext}>
-              {searchQuery
-                ? 'Try a different search term'
-                : 'Start writing your first journal entry'}
-            </Text>
-          </View>
-        }
-      />
+      {loading ? (
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator size="large" color={colors.primaryPink} />
+        </View>
+      ) : (
+        <FlatList
+          data={filteredJournals}
+          keyExtractor={item => item._id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No journals found</Text>
+              <Text style={styles.emptySubtext}>
+                {searchQuery
+                  ? 'Try a different search term'
+                  : 'Start writing your first journal entry'}
+              </Text>
+            </View>
+          }
+        />
+      )}
 
       {/* Floating Add Button */}
       <TouchableOpacity style={styles.fab} onPress={handleAddJournal}>
