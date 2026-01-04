@@ -44,3 +44,75 @@ exports.createJournal = async (req, res) => {
     });
   }
 };
+
+exports.editJournal = async (req, res) => {
+  const { journalId } = req.params;
+  const { title, content, mood, journalDate } = req.body;
+  const userId = req.user.userId;
+
+  const validationError = validateJournal({
+    title,
+    content,
+    mood,
+    journalDate,
+  });
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
+  }
+
+  try {
+    const data = await journalService.editJournal(journalId, userId, {
+      title,
+      content,
+      mood,
+      journalDate,
+    });
+
+    if (!data) {
+      return res.status(404).json({ message: "Journal not found" });
+    }
+
+    res.status(200).json({
+      code: 200,
+      message: "Journal updated successfully",
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllJournals = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const journals = await journalService.getAllJournals(userId);
+
+    res.status(200).json({
+      code: 200,
+      data: journals,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteJournal = async (req, res) => {
+  const { journalId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const deleted = await journalService.deleteJournal(journalId, userId);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Journal not found" });
+    }
+
+    res.status(200).json({
+      code: 200,
+      message: "Journal deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

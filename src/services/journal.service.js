@@ -26,6 +26,7 @@ exports.createJournal = async (title, content, mood, journalDate, id) => {
     content,
     mood,
     journalDate: normalizedDate,
+    userId: id,
   });
 
   return {
@@ -36,4 +37,24 @@ exports.createJournal = async (title, content, mood, journalDate, id) => {
       journalDate: journal.journalDate,
     },
   };
+};
+
+exports.editJournal = async (journalId, userId, updateData) => {
+  return await Journal.findOneAndUpdate(
+    { _id: journalId, userId },
+    updateData,
+    { new: true }
+  );
+};
+
+exports.getAllJournals = async (userId) => {
+  console.log("journal userif", userId);
+  return await Journal.find({ userId }).sort({ journalDate: -1 }); // latest first
+};
+
+exports.deleteJournal = async (journalId, userId) => {
+  return await Journal.findOneAndDelete({
+    _id: journalId,
+    userId,
+  });
 };

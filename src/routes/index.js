@@ -4,5 +4,6 @@ const { authenticate } = require("../middleware/auth.middleware");
 
 router.use("/auth", require("./auth"));
 router.use("/journals", authenticate, require("./journal"));
+router.use("/user", require("./user"));
 
 module.exports = router;

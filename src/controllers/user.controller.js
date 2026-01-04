@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const userService = require("../services/user.service");
 const { validateCreateUser } = require("../validations/user.validation");
-const { validateData } = require("../validations/data.validation");
+const { validateUpdateUser } = require("../validations/user.validation");
 
 exports.createUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -42,11 +42,27 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.dataCollection = async (req, res) => {
-  const { id } = req.params;
-  const { username, age, gender } = req.body;
+exports.getUser = async (req, res) => {
+  const id = req.user.userId;
 
-  const validationError = validateData({
+  try {
+    const user = await userService.getUserById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ code: 200, user: user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+exports.updateUser = async (req, res) => {
+  const userId = req.user.userId;
+  const { name, email, username, age, gender } = req.body;
+
+  const validationError = validateUpdateUser({
+    name,
     username,
     age,
     gender,
@@ -57,156 +73,49 @@ exports.dataCollection = async (req, res) => {
   }
 
   try {
-    const data = await userService.dataCollection(id, {
-      username,
-      age,
-      gender,
-    });
+    const updateData = {};
+
+    if (name !== undefined) updateData.name = name.trim();
+
+    if (username !== undefined) updateData.username = username.trim();
+    if (age !== undefined) updateData.age = age;
+    if (gender !== undefined) updateData.gender = gender;
+
+    const user = await userService.updateUser(userId, updateData);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     res.status(200).json({
       code: 200,
-      message: "Onboarding data saved successfully",
-      data,
-    });
-  } catch (error) {
-    if (error.message === "User not found") {
-      return res.status(404).json({ message: error.message });
-    }
-
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "Email and password required",
-    });
-  }
-
-  try {
-    const user = await userService.loginUser({
-      email: email.trim(),
-      password,
-    });
-
-    return res.status(200).json({
-      code: 200,
-      message: "User logged in successfully",
+      message: "User updated successfully",
       data: user,
     });
   } catch (error) {
-    if (error.message === "Invalid credentials") {
-      return res.status(401).json({
-        message: error.message,
-      });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const id = req.user.userId;
+
+  if (!id) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const user = await userService.deleteUser(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-
-    return res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-};
-
-exports.refresh = async (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(400).json({
-      message: "Refresh token is required",
-    });
-  }
-
-  try {
-    const tokens = await userService.refreshToken(refreshToken);
-
-    return res.status(200).json({
-      code: 200,
-      message: "Token refreshed successfully",
-      data: tokens,
-    });
-  } catch (error) {
-    return res.status(401).json({
-      message: error.message,
-    });
-  }
-};
-
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const data = await userService.forgotPassword({
-      email,
-    });
 
     res.status(200).json({
       code: 200,
-      message: `OTP sent successfully. Your OTP is ${data.otp}`,
-      data,
+      message: "User deleted successfully",
     });
   } catch (error) {
-    if (error.message === "User not found") {
-      return res.status(404).json({
-        code: 404,
-        message: "User not found",
-      });
-    }
-
-    if (error.message === "Email is required") {
-      return res.status(400).json({
-        code: 400,
-        message: error.message,
-      });
-    }
-    console.error(error);
-    res.status(500).json({
-      code: 500,
-      message: "Internal server error",
-    });
-  }
-};
-
-exports.verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
-
-  try {
-    const data = await userService.verifyOtp({ email, otp });
-
-    res.status(200).json({
-      code: 200,
-      message: "OTP verified successfully",
-      data,
-    });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-exports.resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
-
-  if (!email || !newPassword) {
-    return res.status(400).json({
-      message: "Email and new password are required",
-    });
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(newPassword.trim(), 10);
-
-    await userService.resetPassword({
-      email: email.trim(),
-      password: hashedPassword,
-    });
-
-    res.status(200).json({
-      code: 200,
-      message: "Password reset successfully",
-    });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
