@@ -1,19 +1,35 @@
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Image,
+} from 'react-native';
 import React, { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { logout } from '../../../redux/reducers/authenticationReducer';
+import {
+  logout,
+  setUserData,
+} from '../../../redux/reducers/authenticationReducer';
 import { logoutApi } from '../../../api/authAPI';
 import SvgImage from '../../../utilities/svgIcons';
 import { colors, font } from '../../../themes';
 import { removeAllKeys } from '../../../utilities/asyncStore';
-import { deleteUserApi } from '../../../api/commonAPI';
+import {
+  deleteUserApi,
+  uploadProfileImageApi,
+  getUserApi,
+} from '../../../api/commonAPI';
 import { useNavigation } from '@react-navigation/native';
 import PrimaryButton from '../../../components/primaryButton/primaryButton';
 import Popup from '../../../components/popup';
 import Toaster from '../../../components/toasts/helper';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { imageBaseURL } from '../../../api/config';
 
 const Profile = () => {
   const insets = useSafeAreaInsets();
@@ -26,6 +42,41 @@ const Profile = () => {
   const userData = useSelector(
     (state: RootState) => state.authentication.userData,
   );
+  console.log(userData, 'userData');
+
+  const handleEditAvatar = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.5,
+    });
+
+    if (result.assets && result.assets.length > 0) {
+      const image = result.assets[0];
+      setLoading(true);
+      try {
+        const response: any = await uploadProfileImageApi(image);
+        if (response.code === 200) {
+          Toaster.showToast('Profile image updated', 'successToast');
+          // Fetch latest user details to ensure Redux is in sync
+          const userResponse: any = await getUserApi();
+          if (userResponse.code === 200) {
+            dispatch(setUserData(userResponse.user));
+          }
+        } else {
+          Toaster.showToast(
+            response.message || 'Failed to upload image',
+            'errorToast',
+          );
+        }
+      } catch (error) {
+        console.log('Upload error:', error);
+        Toaster.showToast('Failed to upload image', 'errorToast');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   const handleLogout = () => {
     setLogoutVisible(true);
   };
@@ -87,10 +138,25 @@ const Profile = () => {
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
-            <Text style={styles.avatarInitial}>
-              {userData?.name?.charAt(0).toUpperCase() || 'U'}
-            </Text>
-            <TouchableOpacity style={styles.editAvatarButton}>
+            {userData?.profileImage ? (
+              <Image
+                source={{
+                  uri: userData.profileImage.startsWith('http')
+                    ? userData.profileImage
+                    : `${imageBaseURL}${userData.profileImage}`,
+                }}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <Text style={styles.avatarInitial}>
+                {userData?.name?.charAt(0).toUpperCase() || 'U'}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={styles.editAvatarButton}
+              onPress={handleEditAvatar}
+              disabled={loading}
+            >
               <SvgImage
                 icon="edit"
                 height={14}

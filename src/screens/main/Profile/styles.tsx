@@ -35,6 +35,11 @@ export const styles = StyleSheet.create({
 
     position: 'relative',
   },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 55,
+  },
   avatarInitial: {
     fontSize: 26,
     fontFamily: font.nunitoBold,

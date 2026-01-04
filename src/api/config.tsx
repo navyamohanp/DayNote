@@ -7,9 +7,16 @@ export const domains = {
     android: 'http://10.0.2.2:3000/api/',
     ios: 'http://localhost:3000/api/',
   }),
+  image: Platform.select({
+    android: 'http://10.0.2.2:3000',
+    ios: 'http://localhost:3000',
+  }),
 };
 
 export const baseURL = domains.test;
+export const imageBaseURL = domains.image;
+
+console.log(domains.image, '==========img');
 const routes = {
   auth: 'auth/',
   journal: 'journals/',
@@ -32,6 +39,7 @@ export const apiEndpoints = {
   deleteJournal: baseURL + routes.journal + 'deleteJournal',
   logout: baseURL + routes.auth + 'logout',
   changePassword: baseURL + routes.user + 'changePassword',
+  imgUpload: baseURL + routes.user + 'profile-image',
 };
 
 export type APIDataType = {

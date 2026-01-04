@@ -60,3 +60,30 @@ export const getUserApi = async () => {
       });
   });
 };
+
+export const uploadProfileImageApi = async (image: any) => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append('image', {
+      uri: image.uri,
+      name: image.fileName || 'profile.jpg',
+      type: image.type || 'image/jpeg',
+    });
+
+    const apiData: APIDataType = {
+      method: 'post',
+      endPoint: apiEndpoints.imgUpload,
+      paramsType: 'formData',
+      params: formData,
+    };
+
+    apiManager(apiData)
+      .then((response: any) => {
+        console.log(response, 'response');
+        resolve(response);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
+};
