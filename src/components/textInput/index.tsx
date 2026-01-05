@@ -21,7 +21,9 @@ interface CustomTextInputProps {
   numberOfLines?: number;
   inputStyle?: any;
   maxLength?: number;
-  keyboardType?: string;
+  keyboardType?: any;
+  editable?: boolean;
+  onPress?: () => void;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -36,6 +38,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   inputStyle,
   maxLength,
   keyboardType,
+  editable = true,
+  onPress,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -50,10 +54,14 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     zIndex: 1,
   };
 
+  const InputWrapper = onPress ? TouchableOpacity : View;
+
   return (
     <View style={styles.container}>
       <Text style={labelStyle as any}>{label}</Text>
-      <View
+      <InputWrapper
+        activeOpacity={0.7}
+        onPress={onPress}
         style={[
           styles.inputContainer,
           error ? styles.inputErrorBorder : styles.inputNormalBorder,
@@ -75,6 +83,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           textAlignVertical={multiline ? 'top' : 'center'}
           maxLength={maxLength}
           keyboardType={keyboardType}
+          editable={editable}
+          pointerEvents={onPress ? 'none' : 'auto'}
         />
 
         {secureTextEntry && (
@@ -91,7 +101,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
             />
           </TouchableOpacity>
         )}
-      </View>
+      </InputWrapper>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>

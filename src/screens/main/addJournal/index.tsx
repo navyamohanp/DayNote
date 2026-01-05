@@ -18,34 +18,26 @@ import { createJournalApi } from '../../../api/journalAPI';
 import Toaster from '../../../components/toasts/helper';
 import { validateJournal } from '../../../utilities/validations';
 import { MoodSelector } from '../../../components/moodSelector';
+import DatePicker from 'react-native-date-picker';
 
 const AddJournal = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [dateString, setDateString] = useState('');
+  const [open, setOpen] = useState(false);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
   const hasErrors = Object.values(errors).some(Boolean);
 
-  const formatDateInput = (text: string) => {
-    // Remove everything except digits
-    const cleaned = text.replace(/\D/g, '');
-
-    let formatted = cleaned;
-
-    if (cleaned.length >= 3 && cleaned.length <= 4) {
-      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(2)}`;
-    } else if (cleaned.length >= 5) {
-      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(
-        2,
-        4,
-      )}-${cleaned.slice(4, 8)}`;
-    }
-
-    return formatted;
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
   };
 
   const handleCreate = async () => {
@@ -53,7 +45,7 @@ const AddJournal = () => {
       title,
       content,
       mood: selectedMood,
-      journalDate: date,
+      journalDate: dateString,
     });
 
     if (Object.keys(validationErrors).length > 0) {
@@ -68,8 +60,8 @@ const AddJournal = () => {
       const response: any = await createJournalApi({
         title,
         content,
-        mood: selectedMood,
-        journalDate: date,
+        mood: selectedMood || undefined,
+        journalDate: dateString,
       });
 
       setLoading(false);
@@ -115,18 +107,31 @@ const AddJournal = () => {
 
           <CustomTextInput
             label="Date"
-            placeholder="MM-DD-YYYY"
-            value={date}
-            keyboardType="numeric"
-            onChangeText={text => {
-              const formattedDate = formatDateInput(text);
-              setDate(formattedDate);
+            placeholder="Select date"
+            value={dateString}
+            editable={false}
+            onPress={() => setOpen(true)}
+            onChangeText={() => {}}
+            error={errors.journalDate}
+          />
 
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            mode="date"
+            onConfirm={date => {
+              setOpen(false);
+              setDate(date);
+              const formatted = formatDate(date);
+              setDateString(formatted);
               if (errors.journalDate) {
                 setErrors({ ...errors, journalDate: '' });
               }
             }}
-            error={errors.journalDate}
+            onCancel={() => {
+              setOpen(false);
+            }}
           />
 
           <View style={styles.moodHeader}>

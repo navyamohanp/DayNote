@@ -16,7 +16,6 @@ export const domains = {
 export const baseURL = domains.test;
 export const imageBaseURL = domains.image;
 
-console.log(domains.image, '==========img');
 const routes = {
   auth: 'auth/',
   journal: 'journals/',
