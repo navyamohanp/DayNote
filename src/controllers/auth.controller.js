@@ -1,5 +1,6 @@
 const { validateData } = require("../validations/data.validation");
 const authService = require("../services/auth.service");
+const bcrypt = require("bcrypt");
 exports.dataCollection = async (req, res) => {
   const { id } = req.params;
   const { username, age, gender } = req.body;
